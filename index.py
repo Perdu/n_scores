@@ -8,12 +8,12 @@ import MySQLdb as mdb
 import json
 import datetime
 import calendar
-from config import con
+from config import con, is_debug_activated
 
 from flask import Flask, render_template
 app = Flask(__name__)
 
-app.debug = True
+app.debug = is_debug_activated
 
 class player:
     def jsonable(self):

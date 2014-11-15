@@ -11,3 +11,5 @@ if password == '' or user == '':
     sys.exit()
 
 con = mdb.connect('localhost', user, password, 'n_scores')
+
+is_debug_activated = False

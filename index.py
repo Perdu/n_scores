@@ -17,10 +17,11 @@ app = Flask(__name__)
 app.debug = is_debug_activated
 
 class player:
-    def jsonable(self):
-        return self.__dict__
     name = ""
     data = []
+    def reset(self):
+        self.name = ""
+        self.data = []
 
 def decimal_default(obj):
     if isinstance(obj, decimal.Decimal):
@@ -30,12 +31,13 @@ def decimal_default(obj):
 def disp_graph(cur):
     res = ""
     p = player()
+    p.reset()
     row = cur.fetchone()
     while row is not None:
         name = unicode(row[0], errors='ignore')
         if name != p.name and p.name != "":
             res = res + "{ name: " + "'" + p.name + "'" + ", data:" + json.dumps(p.data, default=decimal_default) + "},\n"
-            p.data = []
+            p.reset()
         p.name = name
         score = []
         score.append(calendar.timegm(row[1].utctimetuple())*1000)

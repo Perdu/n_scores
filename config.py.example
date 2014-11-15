@@ -13,3 +13,5 @@ if password == '' or user == '':
 con = mdb.connect('localhost', user, password, 'n_scores')
 
 is_debug_activated = False
+# set to "0.0.0.0" to make the app reachable from the internet
+host = "127.0.0.1"

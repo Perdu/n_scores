@@ -8,7 +8,7 @@ import MySQLdb as mdb
 import json
 import datetime
 import calendar
-from config import con, is_debug_activated
+from config import con, is_debug_activated, host
 
 from flask import Flask, render_template
 app = Flask(__name__)
@@ -45,5 +45,5 @@ def hello():
     return render_template("index.html", series=res)
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host=host)
 

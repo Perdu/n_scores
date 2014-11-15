@@ -8,9 +8,10 @@ import MySQLdb as mdb
 import json
 import datetime
 import calendar
+import decimal
 from config import con, is_debug_activated, host
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 app = Flask(__name__)
 
 app.debug = is_debug_activated
@@ -20,6 +21,48 @@ class player:
         return self.__dict__
     name = ""
     data = []
+
+def decimal_default(obj):
+    if isinstance(obj, decimal.Decimal):
+                return float(obj)
+    raise TypeError
+
+def disp_graph(cur):
+    res = ""
+    p = player()
+    row = cur.fetchone()
+    while row is not None:
+        name = unicode(row[0], errors='ignore')
+        if name != p.name and p.name != "":
+            res = res + "{ name: " + "'" + p.name + "'" + ", data:" + json.dumps(p.data, default=decimal_default) + "},\n"
+            p.data = []
+        p.name = name
+        score = []
+        score.append(calendar.timegm(row[1].utctimetuple())*1000)
+        score.append(row[2])
+        p.data.append(score)
+        row = cur.fetchone()
+        # last player
+    res = res + "{ name: " + "'" + p.name + "'" + ", data:" + json.dumps(p.data, default=decimal_default) + "}"
+    return render_template("index.html", series=res)
+
+def level_id_to_str(level_id):
+    level = level_id - level_id/10*10 # keep only last digit
+    episode = level_id/10
+    return str(episode) + "-" + str(level)
+
+def str_to_level_id(level_str):
+    t = level_str.split('-')
+    return int(t[0])*10 + int(t[1])
+
+@app.route('/level', methods=['POST', 'GET'])
+def disp_level():
+    level = request.args.get('level', '')
+    converted_level = str_to_level_id(level)
+    cur = con.cursor()
+    print converted_level
+    cur.execute("select pseudo, timestamp, score*0.025 from score, players where players.id=player_id AND level_id = %s;", converted_level)
+    return disp_graph(cur)
 
 @app.route("/")
 def hello():

@@ -1,0 +1,13 @@
+#!/usr/bin/env pythonw
+
+import MySQLdb as mdb
+import sys
+
+user = ''
+password = ''
+
+if password == '' or user == '':
+    print "Please set database user and password in config.py"
+    sys.exit()
+    
+con = mdb.connect('localhost', user, password, 'n_scores')

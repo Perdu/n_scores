@@ -51,11 +51,17 @@ def disp_graph(cur):
 def level_id_to_str(level_id):
     level = level_id - level_id/10*10 # keep only last digit
     episode = level_id/10
+    if level == 5:
+        return str(episode)
     return str(episode) + "-" + str(level)
 
 def str_to_level_id(level_str):
     t = level_str.split('-')
-    return int(t[0])*10 + int(t[1])
+    try:
+        return int(t[0])*10 + int(t[1])
+    except:
+        # episode
+        return int(t[0])*10 + 5
 
 @app.route('/level', methods=['POST', 'GET'])
 def disp_level():

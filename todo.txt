@@ -1,0 +1,12 @@
+- global graph with top n players
+- history of a level's 0th, with graph showing evolution of the best score and its owners
+- evolution of the average time of a level's top 20 scores
+- evolution of a level's worst time (19th' time)
+- evolution of the 0-19 time difference on a level
+- first apparition of a player on the scoreboards
+- first 0th of a player
+- difference between those two values
+- evolution of the global "difficulty" of the game (difficuly = 0th time - 19th time)
+- List of "enemies" of a player: players who made him lose 0th or kicked him out of the scoreboard
+- level which changed hand the most
+- Download replays!

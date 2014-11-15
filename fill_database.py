@@ -23,7 +23,6 @@ def add_player(name):
     print "Adding player " + name
     cur = con.cursor()
     cur.execute("INSERT INTO players VALUES(0, %s, 0, 0)", name)
-    con.commit()
 
 def convert_level_nb(episode_nb, level_nb):
     return episode_nb*10 + level_nb
@@ -53,6 +52,7 @@ def fill_database():
         episode_nb = episode_nb + 1
         level_nb = 0
     con.commit()
-        
+    con.close()
+
 if __name__=='__main__':
     fill_database()

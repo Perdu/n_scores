@@ -16,10 +16,16 @@
       if ($("#avg").is(':checked')) {
 	avg = "&avg=1"
       }
+      if ($("#diff").is(':checked')) {
+        diff = "&diff=1";
+        avg = "";
+        by_place = "";
+        top_opt = "";
+      }
       var topn = $('#top').val();
       if (topn < 20)
         top_opt = "&top=" + topn;
-      this.location='/level?level=' + $('#l').val() + by_place + avg + top_opt;
+      this.location='/level?level=' + $('#l').val() + by_place + avg + top_opt + diff;
       return false;
       }
     </script>
@@ -97,6 +103,9 @@
       <br />
       <input type="text" id="top" value="{{ top }}" />
       <label for="avg">Show top: </label>
+      <br />Special options: <br />
+      <label for="diff">Show 19th to 0th difference</label>
+      <input type="checkbox" id="diff" {{ diff }} />
     </form>
   </body>
 </html>

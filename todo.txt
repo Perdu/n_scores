@@ -1,5 +1,4 @@
 - global graph with top n players
-- evolution of the 0-19 time difference on a level
 - first apparition of a player on the scoreboards
 - first 0th of a player
 - difference between those two values

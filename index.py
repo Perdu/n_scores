@@ -72,15 +72,32 @@ def disp_level():
     by_place = request.args.get('by_place', '')
     avg = request.args.get('avg', '')
     top = request.args.get('top', '')
+    diff = request.args.get('diff', '')
     if top != "":
         top = int(top) - 1
     else:
         top = 20
     top_opt = ""
     converted_level = str_to_level_id(level)
+    by_place_form = ""
+    avg_form = ""
+    diff_form = ""
+    if by_place == str(1):
+        by_place_form = "checked"
+    if avg == str(1):
+        avg_form = "checked"
+    if diff == str(1):
+        diff_form = "checked"
+    top_form = int(top) + 1
+    if top_form > 20:
+        top_form = 20
     cur = con.cursor()
     if int(top) < 20 and int(top) >= 0:
         top_opt = " AND place <= " + str(top)
+
+    if diff == str(1):
+        cur.execute("SELECT 'max(score) - min(score)', timestamp, (MAX(score) - min(score))*0.025 FROM score where level_id = %s group by timestamp", converted_level)
+        return render_template("index.html", series=disp_graph(cur), level=level, by_place=by_place_form, avg=avg_form, top=top_form, diff=diff_form)
     if by_place != str(1):
         if avg == str(1):
             cur.execute("SELECT pseudo, timestamp, score*0.025 FROM score WHERE level_id = %s" + top_opt + " UNION SELECT 'average score', timestamp, AVG(score)*0.025 from score where level_id = %s" + top_opt + " GROUP BY timestamp", (converted_level, converted_level))
@@ -91,16 +108,7 @@ def disp_level():
             cur.execute("SELECT place, timestamp, score*0.025 FROM score WHERE level_id = %s" + top_opt + " UNION SELECT 'average score', timestamp, AVG(score)*0.025 from score where level_id = %s" + top_opt + " GROUP BY timestamp ORDER BY place, timestamp", (converted_level, converted_level))
         else:
             cur.execute("SELECT place, timestamp, score*0.025 FROM score WHERE level_id = %s " + top_opt + " ORDER BY place, timestamp;", converted_level)
-    by_place_form = ""
-    avg_form = ""
-    if by_place == str(1):
-        by_place_form = "checked"
-    if avg == str(1):
-        avg_form = "checked"
-    top_form = int(top) + 1
-    if top_form > 20:
-        top_form = 20
-    return render_template("index.html", series=disp_graph(cur), level=level, by_place=by_place_form, avg=avg_form, top=top_form)
+    return render_template("index.html", series=disp_graph(cur), level=level, by_place=by_place_form, avg=avg_form, top=top_form, diff=diff_form)
 
 @app.route("/")
 def hello():

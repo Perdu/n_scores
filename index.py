@@ -49,7 +49,7 @@ def disp_graph(cur):
         row = cur.fetchone()
         # last player
     res = res + "{ name: " + "'" + p.name + "'" + ", data:" + json.dumps(p.data, default=decimal_default) + "}"
-    return render_template("index.html", series=res)
+    return res
 
 def level_id_to_str(level_id):
     level = level_id - level_id/10*10 # keep only last digit
@@ -74,10 +74,12 @@ def disp_level():
     top = request.args.get('top', '')
     if top != "":
         top = int(top) - 1
+    else:
+        top = 20
     top_opt = ""
     converted_level = str_to_level_id(level)
     cur = con.cursor()
-    if top != "" and int(top) < 20 and int(top) >= 0:
+    if int(top) < 20 and int(top) >= 0:
         top_opt = " AND place <= " + str(top)
     if by_place != str(1):
         if avg == str(1):
@@ -88,8 +90,15 @@ def disp_level():
         if avg == str(1):
             cur.execute("SELECT place, timestamp, score*0.025 FROM score WHERE level_id = %s" + top_opt + " UNION SELECT 'average score', timestamp, AVG(score)*0.025 from score where level_id = %s" + top_opt + " GROUP BY timestamp ORDER BY place, timestamp", (converted_level, converted_level))
         else:
-            cur.execute("SELECT place, timestamp, score*0.025 FROM score WHERE level_id = %s " + top_opt + "ORDER BY place, timestamp;", converted_level)
-    return disp_graph(cur)
+            cur.execute("SELECT place, timestamp, score*0.025 FROM score WHERE level_id = %s " + top_opt + " ORDER BY place, timestamp;", converted_level)
+    print by_place
+    by_place_opt = ""
+    avg_opt = ""
+    if by_place == str(1):
+        by_place_opt = "checked"
+    if avg == str(1):
+        avg_opt = "checked"
+    return render_template("index.html", series=disp_graph(cur), level=level, by_place=by_place_opt, avg=avg_opt, top=top+1)
 
 @app.route("/")
 def hello():

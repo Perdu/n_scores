@@ -87,15 +87,15 @@
     <div id="container" style="height: 800px;"></div>
     Display a level:
     <form action="#" onsubmit="return redirect();">
-      <input type="text" id="l" />
+      <input type="text" id="l" value="{{ level }}"/>
       <input type="submit" value="Go" />
       <br />
-      <input type="checkbox" id="by_place" />
+      <input type="checkbox" id="by_place" {{ by_place }} />
       <label for="by_place">By place</label>
-      <input type="checkbox" id="avg" checked="true" />
+      <input type="checkbox" id="avg" {{ avg }} />
       <label for="avg">Show average score</label>
       <br />
-      <input type="text" id="top" value="20" />
+      <input type="text" id="top" value="{{ top }}" />
       <label for="avg">Show top: </label>
     </form>
   </body>

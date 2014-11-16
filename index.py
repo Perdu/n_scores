@@ -92,13 +92,16 @@ def disp_level():
         else:
             cur.execute("SELECT place, timestamp, score*0.025 FROM score WHERE level_id = %s " + top_opt + " ORDER BY place, timestamp;", converted_level)
     print by_place
-    by_place_opt = ""
-    avg_opt = ""
+    by_place_form = ""
+    avg_form = ""
     if by_place == str(1):
-        by_place_opt = "checked"
+        by_place_form = "checked"
     if avg == str(1):
-        avg_opt = "checked"
-    return render_template("index.html", series=disp_graph(cur), level=level, by_place=by_place_opt, avg=avg_opt, top=top+1)
+        avg_form = "checked"
+    top_form = int(top) + 1
+    if top_form > 20:
+        top_form = 20
+    return render_template("index.html", series=disp_graph(cur), level=level, by_place=by_place_form, avg=avg_form, top=top_form)
 
 @app.route("/")
 def hello():

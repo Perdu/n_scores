@@ -70,19 +70,25 @@ def str_to_level_id(level_str):
 def disp_level():
     level = request.args.get('level', '')
     by_place = request.args.get('by_place', '')
-    avg = request.args.get('avg', '')    
+    avg = request.args.get('avg', '')
+    top = request.args.get('top', '')
+    if top != "":
+        top = int(top) - 1
+    top_opt = ""
     converted_level = str_to_level_id(level)
     cur = con.cursor()
+    if top != "" and int(top) < 20 and int(top) >= 0:
+        top_opt = " AND place <= " + str(top)
     if by_place != str(1):
         if avg == str(1):
-            cur.execute("SELECT pseudo, timestamp, score*0.025 FROM score WHERE level_id = %s UNION SELECT 'average score', timestamp, AVG(score)*0.025 from score where level_id = %s GROUP BY timestamp", (converted_level, converted_level))
+            cur.execute("SELECT pseudo, timestamp, score*0.025 FROM score WHERE level_id = %s" + top_opt + " UNION SELECT 'average score', timestamp, AVG(score)*0.025 from score where level_id = %s" + top_opt + " GROUP BY timestamp", (converted_level, converted_level))
         else:
-            cur.execute("SELECT pseudo, timestamp, score*0.025 FROM score WHERE level_id = %s;", converted_level)
+            cur.execute("SELECT pseudo, timestamp, score*0.025 FROM score WHERE level_id = %s" + top_opt, converted_level)
     else:
         if avg == str(1):
-            cur.execute("SELECT place, timestamp, score*0.025 FROM score WHERE level_id = %s UNION SELECT 'average score', timestamp, AVG(score)*0.025 from score where level_id = %s GROUP BY timestamp ORDER BY place, timestamp", (converted_level, converted_level))
+            cur.execute("SELECT place, timestamp, score*0.025 FROM score WHERE level_id = %s" + top_opt + " UNION SELECT 'average score', timestamp, AVG(score)*0.025 from score where level_id = %s" + top_opt + " GROUP BY timestamp ORDER BY place, timestamp", (converted_level, converted_level))
         else:
-            cur.execute("SELECT place, timestamp, score*0.025 FROM score WHERE level_id = %s ORDER BY place, timestamp;", converted_level)
+            cur.execute("SELECT place, timestamp, score*0.025 FROM score WHERE level_id = %s " + top_opt + "ORDER BY place, timestamp;", converted_level)
     return disp_graph(cur)
 
 @app.route("/")

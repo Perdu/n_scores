@@ -5,6 +5,12 @@
     <title>A History of Top-20 Highscorers</title>
 
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script type="text/javascript">
+      function redirect() {
+      this.location='/level?level=' + $('#l').val();
+      return false;
+      }
+    </script>
     <style type="text/css">
       ${demo.css}
     </style>
@@ -67,6 +73,8 @@
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
 
     <div id="container" style="height: 800px;"></div>
-
+    Display a level:
+    <input type="text" id="l" />
+    <input type="button" value="Go" onclick="return redirect();" />
   </body>
 </html>

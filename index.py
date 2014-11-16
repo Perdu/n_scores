@@ -11,7 +11,7 @@ import calendar
 import decimal
 from config import con, is_debug_activated, host
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, url_for
 app = Flask(__name__)
 
 app.debug = is_debug_activated
@@ -97,4 +97,5 @@ def hello():
 
 if __name__ == "__main__":
     app.run(host=host)
+
 

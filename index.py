@@ -34,7 +34,10 @@ def disp_graph(cur):
     p.reset()
     row = cur.fetchone()
     while row is not None:
-        name = unicode(row[0], errors='ignore')
+        if isinstance(row[0], long):
+            name = str(row[0])
+        else:
+            name = unicode(row[0], errors='ignore')
         if name != p.name and p.name != "":
             res = res + "{ name: " + "'" + p.name + "'" + ", data:" + json.dumps(p.data, default=decimal_default) + "},\n"
             p.reset()
@@ -66,10 +69,13 @@ def str_to_level_id(level_str):
 @app.route('/level', methods=['POST', 'GET'])
 def disp_level():
     level = request.args.get('level', '')
+    by_place = request.args.get('by_place', '')
     converted_level = str_to_level_id(level)
     cur = con.cursor()
-    print converted_level
-    cur.execute("SELECT pseudo, timestamp, score*0.025 FROM score WHERE level_id = %s;", converted_level)
+    if by_place == str(1):
+        cur.execute("SELECT pseudo, timestamp, score*0.025 FROM score WHERE level_id = %s;", converted_level)
+    else:
+        cur.execute("SELECT place, timestamp, score*0.025 FROM score WHERE level_id = %s ORDER BY place, timestamp;", converted_level)
     return disp_graph(cur)
 
 @app.route("/")

@@ -7,7 +7,11 @@
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
     <script type="text/javascript">
       function redirect() {
-      this.location='/level?level=' + $('#l').val();
+      var by_place = "";
+      if ($("#by_place").is(':checked')) {
+	by_place = "&by_place=1"
+      }
+      this.location='/level?level=' + $('#l').val() + by_place;
       return false;
       }
     </script>
@@ -77,6 +81,8 @@
     <form action="#" onsubmit="return redirect();">
       <input type="text" id="l" />
       <input type="submit" value="Go" />
+      <input type="checkbox" id="by_place" />
+      <label for="by_place">By place</label>
     </form>
   </body>
 </html>

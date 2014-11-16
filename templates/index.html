@@ -8,10 +8,14 @@
     <script type="text/javascript">
       function redirect() {
       var by_place = "";
+      var avg = "";
       if ($("#by_place").is(':checked')) {
 	by_place = "&by_place=1"
       }
-      this.location='/level?level=' + $('#l').val() + by_place;
+      if ($("#avg").is(':checked')) {
+	by_place = "&avg=1"
+      }
+      this.location='/level?level=' + $('#l').val() + by_place + avg;
       return false;
       }
     </script>
@@ -83,6 +87,8 @@
       <input type="submit" value="Go" />
       <input type="checkbox" id="by_place" />
       <label for="by_place">By place</label>
+      <input type="checkbox" id="avg" checked="true" />
+      <label for="avg">Show average score</label>
     </form>
   </body>
 </html>

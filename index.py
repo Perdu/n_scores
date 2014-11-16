@@ -70,12 +70,19 @@ def str_to_level_id(level_str):
 def disp_level():
     level = request.args.get('level', '')
     by_place = request.args.get('by_place', '')
+    avg = request.args.get('avg', '')    
     converted_level = str_to_level_id(level)
     cur = con.cursor()
-    if by_place == str(1):
-        cur.execute("SELECT pseudo, timestamp, score*0.025 FROM score WHERE level_id = %s;", converted_level)
+    if by_place != str(1):
+        if avg == str(1):
+            cur.execute("SELECT pseudo, timestamp, score*0.025 FROM score WHERE level_id = %s UNION SELECT 'average score', timestamp, AVG(score)*0.025 from score where level_id = %s GROUP BY timestamp", (converted_level, converted_level))
+        else:
+            cur.execute("SELECT pseudo, timestamp, score*0.025 FROM score WHERE level_id = %s;", converted_level)
     else:
-        cur.execute("SELECT place, timestamp, score*0.025 FROM score WHERE level_id = %s ORDER BY place, timestamp;", converted_level)
+        if avg == str(1):
+            cur.execute("SELECT place, timestamp, score*0.025 FROM score WHERE level_id = %s UNION SELECT 'average score', timestamp, AVG(score)*0.025 from score where level_id = %s GROUP BY timestamp ORDER BY place, timestamp", (converted_level, converted_level))
+        else:
+            cur.execute("SELECT place, timestamp, score*0.025 FROM score WHERE level_id = %s ORDER BY place, timestamp;", converted_level)
     return disp_graph(cur)
 
 @app.route("/")

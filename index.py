@@ -69,14 +69,14 @@ def disp_level():
     converted_level = str_to_level_id(level)
     cur = con.cursor()
     print converted_level
-    cur.execute("select pseudo, timestamp, score*0.025 from score, players where players.id=player_id AND level_id = %s;", converted_level)
+    cur.execute("SELECT pseudo, timestamp, score*0.025 FROM score WHERE level_id = %s;", converted_level)
     return disp_graph(cur)
 
 @app.route("/")
 def hello():
     res = ""
     cur = con.cursor()
-    cur.execute("SELECT pseudo, timestamp, count(score) as c FROM score, players WHERE score.player_id=id AND level_id < 1000 GROUP BY player_id, timestamp HAVING c>200 ORDER BY pseudo, timestamp")
+    cur.execute("SELECT pseudo, timestamp, count(score) as c FROM score WHERE level_id < 1000 GROUP BY pseudo, timestamp HAVING c>200 ORDER BY pseudo, timestamp")
     #cur.execute("select pseudo, count(*) as c from score, players where score.player_id=id and timestamp='2007-01-01 12:53:40' group by player_id order by c DESC LIMIT 10;")
     p = player()
     row = cur.fetchone()    

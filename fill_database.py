@@ -27,13 +27,11 @@ def add_player(name):
 def convert_level_nb(episode_nb, level_nb):
     return episode_nb*10 + level_nb
     
-def add_score(score, episode_nb, level_nb, timestamp):
+def add_score(score, episode_nb, level_nb, timestamp, place):
     try:
         cur = con.cursor()
         db_level_nb = convert_level_nb(episode_nb, level_nb)
-        cur.execute("SELECT id FROM players WHERE pseudo = %s", score.name)
-        player_id = cur.fetchone()[0]
-        cur.execute("INSERT INTO score VALUES(%s, %s, TIMESTAMP(%s), %s)", (db_level_nb, player_id, timestamp, score.score))
+        cur.execute("INSERT INTO score VALUES(%s, %s, TIMESTAMP(%s), %s, %s)", (db_level_nb, score.name, timestamp, score.score, place))
     except mdb.IntegrityError as err:
         print err
     
@@ -43,11 +41,11 @@ def fill_database():
     episode_nb = 0
     for episode in scores.table:
         for level in episode:
+            place = 0
             for score in level:
                 if score.name != '':
-                    if not player_exists(score.name):
-                        add_player(score.name)
-                    add_score(score, episode_nb, level_nb, scores.timestamp)
+                    add_score(score, episode_nb, level_nb, scores.timestamp, place)
+                place = place + 1
             level_nb = level_nb + 1
         episode_nb = episode_nb + 1
         level_nb = 0

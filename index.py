@@ -80,6 +80,36 @@ def str_to_level_id(level_str):
         # episode
         return int(t[0])*10 + 5
 
+@app.route('/player', methods=['POST', 'GET'])
+def disp_player():
+    try:
+        pseudo = request.args.get('pseudo', '')
+        cur.execute("SELECT MIN(timestamp), level_id, score FROM score WHERE pseudo = %s;", pseudo)
+        row = cur.fetchone()
+        first_top_20 = Score()
+        first_top_20.timestamp = row[0].strftime("%B %d, %Y")
+        if first_top_20.timestamp == MIN_DATE:
+            first_top_20.timestamp = "before " + MIN_DATE
+        else:
+            first_top_20.level = level_id_to_str(row[1])
+            first_top_20.score = row[2] * 0.025
+
+        cur.execute("SELECT MIN(timestamp), level_id, score FROM score WHERE pseudo = %s AND place = 0;", pseudo)
+        row = cur.fetchone()
+        first_0th = Score()
+        first_0th.timestamp = row[0].strftime("%B %d, %Y")
+        if first_0th.timestamp == MIN_DATE:
+            first_0th.timestamp = "before " + MIN_DATE
+        else:
+            print row[1]
+            first_0th.level = level_id_to_str(row[1])
+            print first_0th.level
+            first_0th.score = row[2] * 0.025
+
+        return render_template("player.html", pseudo=pseudo, first_top_20=first_top_20, first_0th=first_0th)
+    except:
+        return render_template("player.html")
+
 @app.route('/level', methods=['POST', 'GET'])
 def disp_level():
     level = request.args.get('level', '')

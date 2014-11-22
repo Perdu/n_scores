@@ -1,0 +1,19 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>A History of Top-20 Highscorers</title>
+  </head>
+  <body>
+    {% if pseudo %}
+    <h1>{{ pseudo }}</h1>
+    <ul>
+      <li>First top 20 score: <b>{{ first_top_20.timestamp }} {% if first_top_20.level %} ({{ first_top_20.level }}, {{ first_top_20.score }}) {% endif %}</b></li>
+      <li>First 0th: <b>{{ first_0th.timestamp }} {% if first_0th.level %} ({{ first_0th.level }}, {{ first_0th.score }}) {% endif %}</b></li>
+      <li></li>
+    </ul>
+    {% else %}
+    <h1>Player not found</h1>    
+    {% endif %}
+  </body>
+</html>

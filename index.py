@@ -120,10 +120,9 @@ def disp_level():
             cur.execute("SELECT place, timestamp, score*0.025 FROM score WHERE level_id = %s " + top_opt + " ORDER BY place, timestamp;", converted_level)
     return render_template("index.html", series=disp_graph(cur), level=level, by_place=by_place_form, avg=avg_form, top=top_form, diff=diff_form)
 
-@app.route("/")
+#@app.route("/")
 def hello():
     res = ""
-    cur = con.cursor()
     cur.execute("SELECT pseudo, timestamp, count(score) as c FROM score WHERE level_id < 1000 GROUP BY pseudo, timestamp HAVING c>200 ORDER BY pseudo, timestamp")
     #cur.execute("select pseudo, count(*) as c from score, players where score.player_id=id and timestamp='2007-01-01 12:53:40' group by player_id order by c DESC LIMIT 10;")
     p = player()

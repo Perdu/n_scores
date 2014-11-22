@@ -23,6 +23,13 @@ class player:
         self.name = ""
         self.data = []
 
+class Score:
+    level_id = -1
+    timestamp = ""
+    pseudo = ""
+    score = 0
+    place = -1
+
 def decimal_default(obj):
     if isinstance(obj, decimal.Decimal):
                 return float(obj)

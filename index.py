@@ -16,6 +16,10 @@ app = Flask(__name__)
 
 app.debug = is_debug_activated
 
+MIN_DATE = "January 20, 2006"
+
+cur = con.cursor()
+
 class player:
     name = ""
     data = []

@@ -54,9 +54,12 @@ def disp_graph(cur):
 def level_id_to_str(level_id):
     level = level_id - level_id/10*10 # keep only last digit
     episode = level_id/10
+    first_0 = ""
+    if episode < 10:
+        first_0 = "0"
     if level == 5:
-        return str(episode)
-    return str(episode) + "-" + str(level)
+        return first_0 + str(episode)
+    return first_0 + str(episode) + "-" + str(level)
 
 def str_to_level_id(level_str):
     t = level_str.split('-')

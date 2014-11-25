@@ -1,7 +1,4 @@
 - global graph with top n players
-- first apparition of a player on the scoreboards
-- first 0th of a player
-- difference between those two values
 - evolution of the global "difficulty" of the game (difficuly = 0th time - 19th time)
 - List of "enemies" of a player: players who made him lose 0th or kicked him out of the scoreboard
 - level which changed hand the most

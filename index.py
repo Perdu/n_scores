@@ -83,10 +83,12 @@ def str_to_level_id(level_str):
 @app.route('/player', methods=['POST', 'GET'])
 def disp_player():
     try:
+        diff_top20_0th = ""
         pseudo = request.args.get('pseudo', '')
         cur.execute("SELECT timestamp, level_id, score FROM score_unique WHERE pseudo = %s AND timestamp=(SELECT MIN(timestamp) FROM score_unique WHERE pseudo = %s);", (pseudo, pseudo));
         row = cur.fetchone()
         first_top_20 = ""
+        first_top_20_timedelta = row[0]
         first_top_20_timestamp = row[0].strftime("%B %d, %Y")
         if first_top_20_timestamp == MIN_DATE:
             first_top_20_timestamp = "before " + MIN_DATE
@@ -103,6 +105,7 @@ def disp_player():
         row = cur.fetchone()
         # Players may have a top 20 but no 0th
         if row is not None:
+            first_0th_timedelta = row[0]
             first_0th_timestamp = row[0].strftime("%B %d, %Y")
             if first_0th_timestamp == MIN_DATE:
                 first_0th_timestamp = "before " + MIN_DATE
@@ -112,6 +115,7 @@ def disp_player():
                 while (row is not None):
                     first_0th += ', (' + str(level_id_to_str(row[1])) + ', ' + str(row[2] * 0.025) + ')'
                     row = cur.fetchone()
+            diff_top20_0th = (first_0th_timedelta - first_top_20_timedelta).days
         else:
             first_0th_timestamp = "Never"
 
@@ -119,7 +123,9 @@ def disp_player():
                                first_top_20_timestamp=first_top_20_timestamp,
                                first_top_20=first_top_20,
                                first_0th_timestamp=first_0th_timestamp,
-                               first_0th=first_0th)
+                               first_0th=first_0th,
+                               diff_top20_0th=diff_top20_0th
+        )
     except Exception as err:
         print err;
         return render_template("player.html")

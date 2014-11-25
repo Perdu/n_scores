@@ -84,7 +84,7 @@ def str_to_level_id(level_str):
 def disp_player():
     try:
         pseudo = request.args.get('pseudo', '')
-        cur.execute("SELECT MIN(timestamp), level_id, score FROM score WHERE pseudo = %s;", pseudo)
+        cur.execute("SELECT MIN(timestamp), level_id, score FROM score_unique WHERE pseudo = %s;", pseudo)
         row = cur.fetchone()
         first_top_20 = Score()
         first_top_20.timestamp = row[0].strftime("%B %d, %Y")
@@ -94,7 +94,7 @@ def disp_player():
             first_top_20.level = level_id_to_str(row[1])
             first_top_20.score = row[2] * 0.025
 
-        cur.execute("SELECT MIN(timestamp), level_id, score FROM score WHERE pseudo = %s AND place = 0;", pseudo)
+        cur.execute("SELECT MIN(timestamp), level_id, score FROM score_unique WHERE pseudo = %s AND place = 0;", pseudo)
         row = cur.fetchone()
         first_0th = Score()
         first_0th.timestamp = row[0].strftime("%B %d, %Y")

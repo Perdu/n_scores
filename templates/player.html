@@ -3,6 +3,10 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>A History of Top-20 Highscorers</title>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script type="text/javascript">
+      {% include 'redirect.js' %}
+    </script>
   </head>
   <body>
     {% if pseudo %}
@@ -15,5 +19,6 @@
     {% else %}
     <h1>Player not found</h1>    
     {% endif %}
+    {% include 'form.html' %}
   </body>
 </html>

@@ -6,29 +6,7 @@
 
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
     <script type="text/javascript">
-      function redirect() {
-      var by_place = "";
-      var avg = "";
-      var top_opt = "";
-      var diff="";
-      if ($("#by_place").is(':checked')) {
-	by_place = "&by_place=1"
-      }
-      if ($("#avg").is(':checked')) {
-	avg = "&avg=1"
-      }
-      if ($("#diff").is(':checked')) {
-        diff = "&diff=1";
-        avg = "";
-        by_place = "";
-        top_opt = "";
-      }
-      var topn = $('#top').val();
-      if (topn < 20)
-        top_opt = "&top=" + topn;
-      this.location='/level?level=' + $('#l').val() + by_place + avg + top_opt + diff;
-      return false;
-      }
+      {% include 'redirect.js' %}
     </script>
     <style type="text/css">
       ${demo.css}
@@ -90,23 +68,6 @@
   <body>
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
-
-    <div id="container" style="height: 800px;"></div>
-    Display a level:
-    <form action="#" onsubmit="return redirect();">
-      <input type="text" id="l" value="{{ level }}"/>
-      <input type="submit" value="Go" />
-      <br />
-      <input type="checkbox" id="by_place" {{ by_place }} />
-      <label for="by_place">By place</label>
-      <input type="checkbox" id="avg" {{ avg }} />
-      <label for="avg">Show average score</label>
-      <br />
-      <input type="text" id="top" value="{{ top }}" />
-      <label for="avg">Show top: </label>
-      <br />Special options: <br />
-      <label for="diff">Show 19th to 0th difference</label>
-      <input type="checkbox" id="diff" {{ diff }} />
-    </form>
+    {% include 'form.html' %}
   </body>
 </html>

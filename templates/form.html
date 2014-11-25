@@ -1,0 +1,22 @@
+    <h2>Display a level:</h2>
+    <form action="#" onsubmit="return redirect();">
+      <input type="text" id="l" value="{{ level }}"/>
+      <input type="submit" value="Go" />
+      <br />
+      <input type="checkbox" id="by_place" {{ by_place }} />
+      <label for="by_place">By place</label>
+      <input type="checkbox" id="avg" {{ avg }} />
+      <label for="avg">Show average score</label>
+      <br />
+      <input type="text" id="top" value="{{ top }}" />
+      <label for="avg">Show top: </label>
+      <br />Special options: <br />
+      <label for="diff">Show 19th to 0th difference</label>
+      <input type="checkbox" id="diff" {{ diff }} />
+    </form>
+
+    <h2>Display a player:</h2>
+    <form action="#" onsubmit="return redirect_player();">
+      <input type="text" id="player" />
+      <input type="submit" value="Go" />
+    </form>

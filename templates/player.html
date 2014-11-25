@@ -8,8 +8,8 @@
     {% if pseudo %}
     <h1>{{ pseudo }}</h1>
     <ul>
-      <li>First top 20 score: <b>{{ first_top_20.timestamp }} {% if first_top_20.level %} ({{ first_top_20.level }}, {{ first_top_20.score }}) {% endif %}</b></li>
-      <li>First 0th: <b>{{ first_0th.timestamp }} {% if first_0th.level %} ({{ first_0th.level }}, {{ first_0th.score }}) {% endif %}</b></li>
+      <li>First top 20 scores: <b>{{ first_top_20_timestamp }} {% if first_top_20 %} {{ first_top_20 }} {% endif %}</b></li>
+      <li>First 0ths: <b>{{ first_0th_timestamp }} {% if first_0th %} {{ first_0th }} {% endif %}</b></li>
       <li></li>
     </ul>
     {% else %}

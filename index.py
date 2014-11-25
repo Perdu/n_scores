@@ -84,29 +84,33 @@ def str_to_level_id(level_str):
 def disp_player():
     try:
         pseudo = request.args.get('pseudo', '')
-        cur.execute("SELECT MIN(timestamp), level_id, score FROM score_unique WHERE pseudo = %s;", pseudo)
+        cur.execute("SELECT timestamp, level_id, score FROM score_unique WHERE pseudo = %s AND timestamp=(SELECT MIN(timestamp) FROM score_unique WHERE pseudo = %s);", (pseudo, pseudo));
         row = cur.fetchone()
-        first_top_20 = Score()
-        first_top_20.timestamp = row[0].strftime("%B %d, %Y")
-        if first_top_20.timestamp == MIN_DATE:
-            first_top_20.timestamp = "before " + MIN_DATE
+        first_top_20 = ""
+        first_top_20_timestamp = row[0].strftime("%B %d, %Y")
+        if first_top_20_timestamp == MIN_DATE:
+            first_top_20_timestamp = "before " + MIN_DATE
         else:
-            first_top_20.level = level_id_to_str(row[1])
-            first_top_20.score = row[2] * 0.025
+            first_top_20 = '(' + str(level_id_to_str(row[1])) + ', ' + str(row[2] * 0.025) + ')'
+            row = cur.fetchone()
+            while (row is not None):
+                first_top_20 += ', (' + str(level_id_to_str(row[1])) + ', ' + str(row[2] * 0.025) + ')'
+                row = cur.fetchone()
 
-        cur.execute("SELECT MIN(timestamp), level_id, score FROM score_unique WHERE pseudo = %s AND place = 0;", pseudo)
+        cur.execute("SELECT timestamp, level_id, score FROM score_unique WHERE pseudo = %s AND place = 0 AND timestamp=(SELECT MIN(timestamp) FROM score_unique WHERE pseudo = %s AND place = 0);", (pseudo, pseudo));
         row = cur.fetchone()
-        first_0th = Score()
-        first_0th.timestamp = row[0].strftime("%B %d, %Y")
-        if first_0th.timestamp == MIN_DATE:
-            first_0th.timestamp = "before " + MIN_DATE
+        first_0th = ""
+        first_0th_timestamp = row[0].strftime("%B %d, %Y")
+        if first_0th_timestamp == MIN_DATE:
+            first_0th_timestamp = "before " + MIN_DATE
         else:
-            print row[1]
-            first_0th.level = level_id_to_str(row[1])
-            print first_0th.level
-            first_0th.score = row[2] * 0.025
+            first_0th = '(' + str(level_id_to_str(row[1])) + ', ' + str(row[2] * 0.025) + ')'
+            row = cur.fetchone()
+            while (row is not None):
+                first_0th += ', (' + str(level_id_to_str(row[1])) + ', ' + str(row[2] * 0.025) + ')'
+                row = cur.fetchone()
 
-        return render_template("player.html", pseudo=pseudo, first_top_20=first_top_20, first_0th=first_0th)
+        return render_template("player.html", pseudo=pseudo, first_top_20_timestamp=first_top_20_timestamp, first_top_20=first_top_20, first_0th_timestamp=first_0th_timestamp, first_0th=first_0th)
     except Exception as err:
         print err;
         return render_template("player.html")

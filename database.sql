@@ -33,3 +33,12 @@ CREATE TABLE `score` (
 --     CONSTRAINT `player_id_foreign` FOREIGN KEY (`player_id`) REFERENCES `players` (`id`)
 --     CONSTRAINT `level_id_foreign` FOREIGN KEY (`level_id`) REFERENCES `levels` (`id`)
 );
+
+CREATE TABLE `score_unique` (
+       level_id int(3) NOT NULL,
+       pseudo varchar(100) NOT NULL,
+       `timestamp` timestamp,
+       score int(10) unsigned NOT NULL,
+       place int(1) NOT NULL,
+       PRIMARY KEY (`level_id`, `pseudo`, `score`)
+);

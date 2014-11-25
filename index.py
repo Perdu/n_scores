@@ -107,7 +107,8 @@ def disp_player():
             first_0th.score = row[2] * 0.025
 
         return render_template("player.html", pseudo=pseudo, first_top_20=first_top_20, first_0th=first_0th)
-    except:
+    except Exception as err:
+        print err;
         return render_template("player.html")
 
 @app.route('/level', methods=['POST', 'GET'])

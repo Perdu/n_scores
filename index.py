@@ -115,7 +115,11 @@ def disp_player():
         else:
             first_0th_timestamp = "Never"
 
-        return render_template("player.html", pseudo=pseudo, first_top_20_timestamp=first_top_20_timestamp, first_top_20=first_top_20, first_0th_timestamp=first_0th_timestamp, first_0th=first_0th)
+        return render_template("player.html", pseudo=pseudo,
+                               first_top_20_timestamp=first_top_20_timestamp,
+                               first_top_20=first_top_20,
+                               first_0th_timestamp=first_0th_timestamp,
+                               first_0th=first_0th)
     except Exception as err:
         print err;
         return render_template("player.html")
@@ -151,7 +155,9 @@ def disp_level():
 
     if diff == str(1):
         cur.execute("SELECT 'max(score) - min(score)', timestamp, (MAX(score) - min(score))*0.025 FROM score where level_id = %s group by timestamp", converted_level)
-        return render_template("index.html", series=disp_graph(cur), level=level, by_place=by_place_form, avg=avg_form, top=top_form, diff=diff_form)
+        return render_template("index.html", series=disp_graph(cur),
+                               level=level, by_place=by_place_form,
+                               avg=avg_form, top=top_form, diff=diff_form)
     if by_place != str(1):
         if avg == str(1):
             cur.execute("SELECT pseudo, timestamp, score*0.025 FROM score WHERE level_id = %s" + top_opt + " UNION SELECT 'average score', timestamp, AVG(score)*0.025 from score where level_id = %s" + top_opt + " GROUP BY timestamp", (converted_level, converted_level))
@@ -162,7 +168,9 @@ def disp_level():
             cur.execute("SELECT place, timestamp, score*0.025 FROM score WHERE level_id = %s" + top_opt + " UNION SELECT 'average score', timestamp, AVG(score)*0.025 from score where level_id = %s" + top_opt + " GROUP BY timestamp ORDER BY place, timestamp", (converted_level, converted_level))
         else:
             cur.execute("SELECT place, timestamp, score*0.025 FROM score WHERE level_id = %s " + top_opt + " ORDER BY place, timestamp;", converted_level)
-    return render_template("index.html", series=disp_graph(cur), level=level, by_place=by_place_form, avg=avg_form, top=top_form, diff=diff_form)
+    return render_template("index.html", series=disp_graph(cur), level=level,
+                           by_place=by_place_form, avg=avg_form, top=top_form,
+                           diff=diff_form)
 
 #@app.route("/")
 def hello():

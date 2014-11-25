@@ -187,6 +187,17 @@ def disp_level():
                            by_place=by_place_form, avg=avg_form, top=top_form,
                            diff=diff_form, nb20=nb20, nb0=nb0)
 
+@app.route('/stats', methods=['POST', 'GET'])
+def disp_stats():
+    cur.execute("SELECT COUNT(pseudo) AS a, COUNT(DISTINCT pseudo), level_id FROM score_unique WHERE place = 0 GROUP BY level_id ORDER BY a DESC;")
+    table = ""
+    row = cur.fetchone()
+    while row is not None:
+        level = level_id_to_str(row[2])
+        table += "<tr><td>" + str(row[0]) + "</td><td>" + str(row[1]) + "</td><td><a href='/level?level=" + level + "&top=1'>" + level + "</a></td></tr>"
+        row = cur.fetchone()
+    return render_template("stats.html", table=table)
+
 #@app.route("/")
 def hello():
     res = ""

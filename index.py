@@ -98,17 +98,22 @@ def disp_player():
                 row = cur.fetchone()
 
         cur.execute("SELECT timestamp, level_id, score FROM score_unique WHERE pseudo = %s AND place = 0 AND timestamp=(SELECT MIN(timestamp) FROM score_unique WHERE pseudo = %s AND place = 0);", (pseudo, pseudo));
-        row = cur.fetchone()
         first_0th = ""
-        first_0th_timestamp = row[0].strftime("%B %d, %Y")
-        if first_0th_timestamp == MIN_DATE:
-            first_0th_timestamp = "before " + MIN_DATE
-        else:
-            first_0th = '(' + str(level_id_to_str(row[1])) + ', ' + str(row[2] * 0.025) + ')'
-            row = cur.fetchone()
-            while (row is not None):
-                first_0th += ', (' + str(level_id_to_str(row[1])) + ', ' + str(row[2] * 0.025) + ')'
+        first_0th_timestamp = ""
+        row = cur.fetchone()
+        # Players may have a top 20 but no 0th
+        if row is not None:
+            first_0th_timestamp = row[0].strftime("%B %d, %Y")
+            if first_0th_timestamp == MIN_DATE:
+                first_0th_timestamp = "before " + MIN_DATE
+            else:
+                first_0th = '(' + str(level_id_to_str(row[1])) + ', ' + str(row[2] * 0.025) + ')'
                 row = cur.fetchone()
+                while (row is not None):
+                    first_0th += ', (' + str(level_id_to_str(row[1])) + ', ' + str(row[2] * 0.025) + ')'
+                    row = cur.fetchone()
+        else:
+            first_0th_timestamp = "Never"
 
         return render_template("player.html", pseudo=pseudo, first_top_20_timestamp=first_top_20_timestamp, first_top_20=first_top_20, first_0th_timestamp=first_0th_timestamp, first_0th=first_0th)
     except Exception as err:

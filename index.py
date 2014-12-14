@@ -9,16 +9,16 @@ import json
 import datetime
 import calendar
 import decimal
-from config import con, is_debug_activated, host
+from config import *
 
 from flask import Flask, render_template, request, url_for
 app = Flask(__name__)
 
 app.debug = is_debug_activated
+con = None
+cur = None
 
 MIN_DATE = "January 20, 2006"
-
-cur = con.cursor()
 
 class player:
     name = ""
@@ -33,6 +33,9 @@ class Score:
     pseudo = ""
     score = 0
     place = -1
+
+def connect_db():
+    return mdb.connect('localhost', user, password, 'n_scores2')
 
 def decimal_default(obj):
     if isinstance(obj, decimal.Decimal):
@@ -118,7 +121,6 @@ def disp_player():
             diff_top20_0th = (first_0th_timedelta - first_top_20_timedelta).days
         else:
             first_0th_timestamp = "Never"
-
         return render_template("player.html", pseudo=pseudo,
                                first_top_20_timestamp=first_top_20_timestamp,
                                first_top_20=first_top_20,
@@ -155,7 +157,6 @@ def disp_level():
     top_form = int(top) + 1
     if top_form > 20:
         top_form = 20
-    cur = con.cursor()
     if int(top) < 20 and int(top) >= 0:
         top_opt = " AND place <= " + str(top)
 
@@ -219,6 +220,18 @@ def hello():
         # last player
     res = res + "{ name: " + "'" + p.name + "'" + ", data:" + json.dumps(p.data) + "}"
     return render_template("index.html", series=res)
+
+@app.before_request
+def before_request():
+    global con, cur
+    con = connect_db()
+    cur = con.cursor()
+
+@app.after_request
+def after_request(res):
+    global con
+    con.close()
+    return res
 
 if __name__ == "__main__":
     app.run(host=host)

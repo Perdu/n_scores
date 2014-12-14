@@ -10,8 +10,6 @@ if password == '' or user == '':
     print "Please set database user and password in config.py"
     sys.exit()
 
-con = mdb.connect('localhost', user, password, 'n_scores2')
-
 is_debug_activated = False
 # set to "0.0.0.0" to make the app reachable from the internet
 host = "127.0.0.1"

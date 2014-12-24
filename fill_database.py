@@ -9,11 +9,15 @@ import re
 import datetime
 import _mysql
 import MySQLdb as mdb
-from config import con
+import config
 
 ######## app ########
 
-cur = con.cursor()
+config.con = connect_db()
+cur = config.con.cursor()
+
+def connect_db():
+    return mdb.connect('localhost', config.user, config.password, 'n_scores2')
 
 def player_exists(name):
     cur.execute("SELECT 1 FROM players WHERE pseudo = %s", name)
@@ -56,8 +60,8 @@ def fill_database():
             level_nb = level_nb + 1
         episode_nb = episode_nb + 1
         level_nb = 0
-    con.commit()
-    con.close()
+    config.con.commit()
+    config.con.close()
 
 if __name__=='__main__':
     fill_database()

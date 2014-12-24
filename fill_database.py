@@ -13,7 +13,7 @@ import config
 
 ######## app ########
 
-config.con = connect_db()
+config.con = self.connect_db()
 cur = config.con.cursor()
 
 def connect_db():

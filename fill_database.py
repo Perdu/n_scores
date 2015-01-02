@@ -13,11 +13,11 @@ import config
 
 ######## app ########
 
-config.con = self.connect_db()
-cur = config.con.cursor()
-
 def connect_db():
     return mdb.connect('localhost', config.user, config.password, 'n_scores2')
+
+config.con = connect_db()
+cur = config.con.cursor()
 
 def player_exists(name):
     cur.execute("SELECT 1 FROM players WHERE pseudo = %s", name)

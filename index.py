@@ -202,11 +202,15 @@ def disp_stats():
 
 @app.route('/new', methods=['POST', 'GET'])
 def new():
-    cur.execute("SELECT level_id, pseudo, score from demos where timestamp > now() - interval 1 hour")
+    cur.execute("SELECT level_id, pseudo, score, timestamp from demos where timestamp > now() - interval 1 day")
     rows = cur.fetchall()
     table = ""
     for row in rows:
-        table += "<tr><td>" + level_id_to_str(row[0]) + "</td><td>" + cgi.escape(row[1]) + "</td><td><a href='/demo?" + + '>' + str(row[2] * 0.025) + "</a></td></tr>"
+        level_id = str(row[0])
+        pseudo = cgi.escape(row[1])
+        score = str(row[2] * 0.025)
+        timestamp = str(row[3])
+        table += "<tr><td>" + level_id_to_str(row[0]) + "</td><td>" + pseudo + "</td><td><a href='/demo?player=" + pseudo + '&level_id=' + level_id + '&timestamp=' + timestamp + "'>" + score + "</a></td></tr>"
     return render_template("new.html", table=table)
 
 @app.route('/demo', methods=['POST', 'GET'])

@@ -42,3 +42,12 @@ CREATE TABLE `score_unique` (
        place int(1) NOT NULL,
        PRIMARY KEY (`level_id`, `pseudo`, `score`)
 );
+
+CREATE TABLE `demos` (
+       level_id int(3) NOT NULL,
+       pseudo varchar(100) NOT NULL,
+       score int(10) unsigned NOT NULL,
+       `timestamp` timestamp,
+       demo varchar(100000) NOT NULL,
+       PRIMARY KEY (`level_id`, `pseudo`, `score`)
+);

@@ -399,8 +399,27 @@ def getReplayKey(ep, lvl, rank):
         return None
     return int(m.group(1))
 
-def downloadReplayByPKey(pkey):
-    url = 'http://www.harveycartel.org/metanet/n/data13/get_lv_demo.php'
+def getReplayKeyByName(ep, lvl, name):
+    if ep<0 or ep>=NUM_EPISODES or lvl<0 or lvl>5:
+        return None
+    if lvl == 5:
+        lvl = 'e'
+    else:
+        lvl = str(lvl)
+    url = 'http://www.harveycartel.org/metanet/n/data13/get_topscores_query_jg.php'
+    postdata = 'episode%5Fnumber=' + str(ep)
+    allscores = openURL(url, postdata).replace('\r','')
+    searchstr = r'%sname\d+=%s&%spkey\d+=(\d+)' % (lvl, re.escape(name), lvl)
+    m=re.search(searchstr, allscores)
+    if not m:
+        return None
+    return int(m.group(1))
+
+def downloadReplayByPKey(pkey, is_episode):
+    if is_episode:
+        url = 'http://www.harveycartel.org/metanet/n/data13/get_ep_demo.php'
+    else:
+        url = 'http://www.harveycartel.org/metanet/n/data13/get_lv_demo.php'
     postdata = 'pk='+str(pkey)
     return openURL(url, postdata).replace('\r','')
 
@@ -411,10 +430,14 @@ def downloadReplay(ep, lvl, rank):
         if pkey is None:
             raise NHighError('Unable to download replay - replay key not found')
 
-        alldata = downloadReplayByPKey(pkey)
+        is_episode = (lvl == 5)
+        alldata = downloadReplayByPKey(pkey, is_episode)
         m_name=re.search('&name=([^&]+)',alldata)
         m_score=re.search('&score=([^&]+)',alldata)
-        m_demo=re.search('&demo=([^&]+)',alldata)
+        if is_episode:
+            m_demo=re.search('(&demo0=.*)epnum',alldata)
+        else:
+            m_demo=re.search('&demo=([^&]+)',alldata)
         try:
             player = m_name.group(1)
             demo = m_demo.group(1)
@@ -426,6 +449,36 @@ def downloadReplay(ep, lvl, rank):
         
     except IOError:
         raise NHighError('Error downloading replay data')
+
+def downloadReplayByName(ep, lvl, name):
+    'Returns tuple: (player,score,demo)'
+    try:
+        pkey = getReplayKeyByName(ep, lvl, name)
+        if pkey is None:
+            print "Unable to download replay - replay key not found"
+            return (None, None, None)
+
+        is_episode = (lvl == 5)
+        alldata = downloadReplayByPKey(pkey, is_episode)
+        m_name=re.search('&name=([^&]+)',alldata)
+        m_score=re.search('&score=([^&]+)',alldata)
+        if is_episode:
+            m_demo=re.search('(&demo0=.*)epnum',alldata)
+        else:
+            m_demo=re.search('&demo=([^&]+)',alldata)
+        try:
+            player = m_name.group(1)
+            demo = m_demo.group(1)
+            score = int(m_score.group(1))
+        except (ValueError, AttributeError):
+            print 'Unable to download replay - received invalid data'
+            return (None, None, None)
+
+        return (player, score, demo)
+
+    except IOError:
+        raise NHighError('Error downloading replay data')
+
 
 def getReplayKeyName(key):
     ret = ''

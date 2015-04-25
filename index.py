@@ -219,7 +219,7 @@ def new():
         pseudo = cgi.escape(row[1])
         score = score_to_str(row[2])
         timestamp = str(row[3])
-        table += "<tr><td>" + level_id_to_str(row[0]) + "</td><td>" + pseudo + "</td><td><a href='/demo?player=" + pseudo + '&level_id=' + level_id + '&timestamp=' + timestamp + "'>" + score + "</a></td></tr>"
+        table += "<tr><td>" + level_id_to_str(row[0]) + "</td><td><a href='/player?pseudo=" + pseudo + "'>" + pseudo + "</a></td><td><a href='/demo?player=" + pseudo + '&level_id=' + level_id + '&timestamp=' + timestamp + "'>" + score + "</a></td></tr>"
     return render_template("new.html", table=table)
 
 @app.route('/demo', methods=['POST', 'GET'])

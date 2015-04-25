@@ -84,6 +84,15 @@ def str_to_level_id(level_str):
         # episode
         return int(t[0])*10 + 5
 
+def score_to_str(score):
+    score = str(int(score) * 0.025)
+    nb_digits = len(score.split('.')[1])
+    if nb_digits == 1:
+        score = score + "00"
+    elif nb_digits == 2:
+        score = score + "0"
+    return score
+
 @app.route('/player', methods=['POST', 'GET'])
 def disp_player():
     try:
@@ -97,10 +106,10 @@ def disp_player():
         if first_top_20_timestamp == MIN_DATE:
             first_top_20_timestamp = "before " + MIN_DATE
         else:
-            first_top_20 = '(' + str(level_id_to_str(row[1])) + ', ' + str(row[2] * 0.025) + ')'
+            first_top_20 = '(' + str(level_id_to_str(row[1])) + ', ' + score_to_str(row[2]) + ')'
             row = cur.fetchone()
             while (row is not None):
-                first_top_20 += ', (' + str(level_id_to_str(row[1])) + ', ' + str(row[2] * 0.025) + ')'
+                first_top_20 += ', (' + str(level_id_to_str(row[1])) + ', ' + score_to_str(row[2]) + ')'
                 row = cur.fetchone()
 
         cur.execute("SELECT timestamp, level_id, score FROM score_unique WHERE pseudo = %s AND place = 0 AND timestamp=(SELECT MIN(timestamp) FROM score_unique WHERE pseudo = %s AND place = 0);", (pseudo, pseudo));
@@ -114,10 +123,10 @@ def disp_player():
             if first_0th_timestamp == MIN_DATE:
                 first_0th_timestamp = "before " + MIN_DATE
             else:
-                first_0th = '(' + str(level_id_to_str(row[1])) + ', ' + str(row[2] * 0.025) + ')'
+                first_0th = '(' + str(level_id_to_str(row[1])) + ', ' + score_to_str(row[2]) + ')'
                 row = cur.fetchone()
                 while (row is not None):
-                    first_0th += ', (' + str(level_id_to_str(row[1])) + ', ' + str(row[2] * 0.025) + ')'
+                    first_0th += ', (' + str(level_id_to_str(row[1])) + ', ' + score_to_str(row[2]) + ')'
                     row = cur.fetchone()
             diff_top20_0th = (first_0th_timedelta - first_top_20_timedelta).days
         else:
@@ -208,7 +217,7 @@ def new():
     for row in rows:
         level_id = str(row[0])
         pseudo = cgi.escape(row[1])
-        score = str(row[2] * 0.025)
+        score = score_to_str(row[2])
         timestamp = str(row[3])
         table += "<tr><td>" + level_id_to_str(row[0]) + "</td><td>" + pseudo + "</td><td><a href='/demo?player=" + pseudo + '&level_id=' + level_id + '&timestamp=' + timestamp + "'>" + score + "</a></td></tr>"
     return render_template("new.html", table=table)

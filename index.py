@@ -10,6 +10,7 @@ import datetime
 import calendar
 import decimal
 from config import *
+import cgi
 
 from flask import Flask, render_template, request, url_for
 app = Flask(__name__)
@@ -198,6 +199,24 @@ def disp_stats():
         table += "<tr><td>" + str(row[0]) + "</td><td>" + str(row[1]) + "</td><td><a href='/level?level=" + level + "&top=1'>" + level + "</a></td></tr>"
         row = cur.fetchone()
     return render_template("stats.html", table=table)
+
+@app.route('/new', methods=['POST', 'GET'])
+def new():
+    cur.execute("SELECT level_id, pseudo, score from demos where timestamp > now() - interval 1 hour")
+    rows = cur.fetchall()
+    table = ""
+    for row in rows:
+        table += "<tr><td>" + level_id_to_str(row[0]) + "</td><td>" + cgi.escape(row[1]) + "</td><td><a href='/demo?" + + '>' + str(row[2] * 0.025) + "</a></td></tr>"
+    return render_template("new.html", table=table)
+
+@app.route('/demo', methods=['POST', 'GET'])
+def demo():
+    level_id = request.args.get('level_id', '')
+    pseudo = request.args.get('player', '')
+    timestamp = request.args.get('timestamp', '')
+    cur.execute("SELECT demo FROM demos WHERE level_id = %s AND pseudo = %s AND timestamp = %s", (level_id, pseudo, timestamp))
+    row = cur.fetchone()
+    return render_template("demo.html", demo=row[0])
 
 @app.route("/")
 def index():

@@ -199,8 +199,12 @@ def disp_stats():
         row = cur.fetchone()
     return render_template("stats.html", table=table)
 
-#@app.route("/")
-def hello():
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+
+def display_all():
     res = ""
     cur.execute("SELECT pseudo, timestamp, count(score) as c FROM score WHERE level_id < 1000 GROUP BY pseudo, timestamp HAVING c>200 ORDER BY pseudo, timestamp")
     #cur.execute("select pseudo, count(*) as c from score, players where score.player_id=id and timestamp='2007-01-01 12:53:40' group by player_id order by c DESC LIMIT 10;")
@@ -219,7 +223,7 @@ def hello():
         row = cur.fetchone()
         # last player
     res = res + "{ name: " + "'" + p.name + "'" + ", data:" + json.dumps(p.data) + "}"
-    return render_template("index.html", series=res)
+    return render_template("all.html", series=res)
 
 @app.before_request
 def before_request():

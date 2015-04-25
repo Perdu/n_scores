@@ -215,12 +215,15 @@ def new():
 
 @app.route('/demo', methods=['POST', 'GET'])
 def demo():
-    level_id = request.args.get('level_id', '')
-    pseudo = request.args.get('player', '')
-    timestamp = request.args.get('timestamp', '')
-    cur.execute("SELECT demo FROM demos WHERE level_id = %s AND pseudo = %s AND timestamp = %s", (level_id, pseudo, timestamp))
-    row = cur.fetchone()
-    return render_template("demo.html", demo=row[0])
+    try:
+        level_id = request.args.get('level_id', '')
+        pseudo = request.args.get('player', '')
+        timestamp = request.args.get('timestamp', '')
+        cur.execute("SELECT demo FROM demos WHERE level_id = %s AND pseudo = %s AND timestamp = %s", (level_id, pseudo, timestamp))
+        row = cur.fetchone()
+        return render_template("demo.html", demo=row[0])
+    except:
+        return render_template("error.html", error="Unable to find demo.")
 
 @app.route("/")
 def index():

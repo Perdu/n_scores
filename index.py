@@ -211,7 +211,7 @@ def disp_stats():
 
 @app.route('/new', methods=['POST', 'GET'])
 def new():
-    cur.execute("SELECT level_id, pseudo, score, timestamp from score_unique where timestamp > now() - interval 1 day")
+    cur.execute("SELECT level_id, pseudo, score, timestamp, place from score_unique where timestamp > now() - interval 1 day")
     rows = cur.fetchall()
     table = ""
     for row in rows:
@@ -219,7 +219,8 @@ def new():
         pseudo = cgi.escape(row[1])
         score = score_to_str(row[2])
         timestamp = str(row[3])
-        table += "<tr><td>" + level_id_to_str(row[0]) + "</td><td><a href='/player?pseudo=" + pseudo + "'>" + pseudo + "</a></td><td><a href='/demo?player=" + pseudo + '&level_id=' + level_id + '&timestamp=' + timestamp + "'>" + score + "</a></td></tr>"
+        place = str(row[4])
+        table += "<tr><td>" + level_id_to_str(row[0]) + "</td><td><a href='/player?pseudo=" + pseudo + "'>" + pseudo + "</a></td><td>" + place + "</td><td><a href='/demo?player=" + pseudo + '&level_id=' + level_id + '&timestamp=' + timestamp + "'>" + score + "</a></td></tr>"
     return render_template("new.html", table=table)
 
 @app.route('/demo', methods=['POST', 'GET'])

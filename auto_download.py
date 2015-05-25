@@ -46,8 +46,7 @@ def download_demos(scores):
                     level_id = convert_level_nb(episode_nb, level_nb)
                     if not demo_exists(level_id, score.name, score.score):
                         print "New demo:", level_id, score.name, score.score
-                        add_demo(episode_nb, level_nb, score.name, score.score, cur_time)
-                        add_score_unique(score, episode_nb, level_nb, cur_time, place)
+                        add_demo(episode_nb, level_nb, score.name, score.score, cur_time, place)
                 place = place + 1
             level_nb = level_nb + 1
         episode_nb = episode_nb + 1
@@ -55,22 +54,22 @@ def download_demos(scores):
     config.con.commit()
     config.con.close()
 
-def add_demo(episode_nb, level_nb, pseudo, score, timestamp):
+def add_demo(episode_nb, level_nb, pseudo, score, timestamp, place):
     (player, score, demo) = downloadReplayByName(episode_nb, level_nb, pseudo)
     if demo == None:
-        return
+        print >> sys.stderr, "Error: Could not find demo for " + pseudo + " on level " + str(episode_nb) + "-" + str(level_nb)
     if player != pseudo:
         print "Error: player name is not what was expected : %s instead of %s for level %d-%d" % (player, pseudo, episode_nb, level_nb)
     else:
         level_id = convert_level_nb(episode_nb, level_nb)
         try:
-            cur.execute("INSERT INTO demos VALUES(%s, %s, %s, %s, %s)", (level_id, pseudo, score, timestamp, demo))
+            cur.execute("INSERT INTO score_unique VALUES(%s, %s, %s, %s, %s, %s)", (level_id, pseudo, timestamp, score, place, demo))
             config.con.commit()
         except mdb.IntegrityError as err:
             print err
 
 def demo_exists(level_id, pseudo, score):
-    cur.execute("SELECT 1 FROM demos WHERE level_id=%s AND pseudo=%s AND score=%s", (level_id, pseudo, score))
+    cur.execute("SELECT 1 FROM score_unique WHERE level_id=%s AND pseudo=%s AND score=%s", (level_id, pseudo, score))
     return (cur.rowcount > 0)
 
 # Duplicate with fill_database (TODO)

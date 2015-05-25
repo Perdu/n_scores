@@ -56,8 +56,6 @@ if __name__=='__main__':
 
     print "Cleaning table score"
     cur.execute("DELETE FROM score WHERE pseudo = %s", (sys.argv[1]))
-    print "Cleaning table demos"
-    cur.execute("DELETE FROM demos WHERE pseudo = %s", (sys.argv[1]))
     
     config.con.commit()
     config.con.close()

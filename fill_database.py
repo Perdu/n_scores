@@ -36,7 +36,9 @@ def add_score(score, episode_nb, level_nb, timestamp, place):
         db_level_nb = convert_level_nb(episode_nb, level_nb)
         cur.execute("INSERT INTO score VALUES(%s, %s, TIMESTAMP(%s), %s, %s)", (db_level_nb, score.name, timestamp, score.score, place))
     except mdb.IntegrityError as err:
-        print err
+        # There ARE duplicate entries on the scoreboard.
+        # It's sad, but the best is to ignore them.
+        pass
 
 def add_score_unique(score, episode_nb, level_nb, timestamp, place):
     try:

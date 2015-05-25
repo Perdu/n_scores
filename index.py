@@ -211,7 +211,7 @@ def disp_stats():
 
 @app.route('/new', methods=['POST', 'GET'])
 def new():
-    cur.execute("SELECT level_id, pseudo, score, timestamp from demos where timestamp > now() - interval 1 day")
+    cur.execute("SELECT level_id, pseudo, score, timestamp from score_unique where timestamp > now() - interval 1 day")
     rows = cur.fetchall()
     table = ""
     for row in rows:
@@ -228,7 +228,7 @@ def demo():
         level_id = request.args.get('level_id', '')
         pseudo = request.args.get('player', '')
         timestamp = request.args.get('timestamp', '')
-        cur.execute("SELECT demo FROM demos WHERE level_id = %s AND pseudo = %s AND timestamp = %s", (level_id, pseudo, timestamp))
+        cur.execute("SELECT demo FROM score_unique WHERE level_id = %s AND pseudo = %s AND timestamp = %s", (level_id, pseudo, timestamp))
         row = cur.fetchone()
         return render_template("demo.html", demo=row[0])
     except:

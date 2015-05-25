@@ -47,6 +47,7 @@ def download_demos(scores):
                     if not demo_exists(level_id, score.name, score.score):
                         print "New demo:", level_id, score.name, score.score
                         add_demo(episode_nb, level_nb, score.name, score.score, cur_time)
+                        add_score_unique(score, episode_nb, level_nb, cur_time, place)
                 place = place + 1
             level_nb = level_nb + 1
         episode_nb = episode_nb + 1
@@ -71,6 +72,15 @@ def add_demo(episode_nb, level_nb, pseudo, score, timestamp):
 def demo_exists(level_id, pseudo, score):
     cur.execute("SELECT 1 FROM demos WHERE level_id=%s AND pseudo=%s AND score=%s", (level_id, pseudo, score))
     return (cur.rowcount > 0)
+
+# Duplicate with fill_database (TODO)
+def add_score_unique(score, episode_nb, level_nb, timestamp, place):
+    try:
+        db_level_nb = convert_level_nb(episode_nb, level_nb)
+        cur.execute("INSERT INTO score_unique VALUES(%s, %s, TIMESTAMP(%s), %s, %s)", (db_level_nb, score.name, timestamp, score.score, place))
+    except mdb.IntegrityError as err:
+        pass
+
 
 if __name__=='__main__':
     run()

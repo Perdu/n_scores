@@ -211,7 +211,7 @@ def disp_stats():
 
 @app.route('/new', methods=['POST', 'GET'])
 def new():
-    cur.execute("SELECT level_id, pseudo, score, timestamp, place from score_unique where timestamp > now() - interval 1 week ORDER BY timestamp DESC")
+    cur.execute("SELECT level_id, pseudo, score, timestamp, place from score_unique where timestamp > now() - interval 1 month ORDER BY timestamp DESC")
     rows = cur.fetchall()
     table = ""
     for row in rows:

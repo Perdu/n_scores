@@ -37,7 +37,7 @@ CREATE TABLE `score` (
 CREATE TABLE `score_unique` (
        level_id int(3) NOT NULL,
        pseudo varchar(100) NOT NULL,
-       `timestamp` timestamp,
+       `timestamp` timestamp DEFAULT CURRENT_TIMESTAMP,
        score int(10) unsigned NOT NULL,
        place int(1) NOT NULL,
        PRIMARY KEY (`level_id`, `pseudo`, `score`)

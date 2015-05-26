@@ -57,7 +57,6 @@ def fill_database():
             for score in level:
                 if score.name != '':
                     add_score(score, episode_nb, level_nb, scores.timestamp, place)
-                    add_score_unique(score, episode_nb, level_nb, scores.timestamp, place)
                 place = place + 1
             level_nb = level_nb + 1
         episode_nb = episode_nb + 1

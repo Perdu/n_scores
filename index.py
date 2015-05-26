@@ -237,7 +237,11 @@ def demo():
         level_id = request.args.get('level_id', '')
         pseudo = request.args.get('player', '')
         timestamp = request.args.get('timestamp', '')
-        cur.execute("SELECT demo FROM score_unique WHERE level_id = %s AND pseudo = %s AND timestamp = %s", (level_id, pseudo, timestamp))
+        score = request.args.get('score', '')
+        if score == "":
+            cur.execute("SELECT demo FROM score_unique WHERE level_id = %s AND pseudo = %s AND timestamp = %s", (level_id, pseudo, timestamp))
+        else:
+            cur.execute("SELECT demo FROM score_unique WHERE level_id = %s AND pseudo = %s AND score = %s", (level_id, pseudo, score))
         row = cur.fetchone()
         return render_template("demo.html", demo=row[0])
     except:

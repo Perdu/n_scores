@@ -220,7 +220,15 @@ def new():
         score = score_to_str(row[2])
         timestamp = str(row[3])
         place = str(row[4])
-        table += "<tr><td>" + timestamp + "</td><td>" + level_id_to_str(row[0]) + "</td><td><a href='/player?pseudo=" + pseudo + "'>" + pseudo + "</a></td><td>" + place + "</td><td><a href='/demo?player=" + pseudo + '&level_id=' + level_id + '&timestamp=' + timestamp + "'>" + score + "</a></td></tr>"
+        cur.execute("SELECT score, timestamp, place from score_unique where level_id = %s and pseudo = %s and timestamp < %s ORDER BY timestamp DESC limit 1;", (level_id, pseudo, timestamp))
+        if cur.rowcount > 0:
+            row2 = cur.fetchone()
+            prev_score = score_to_str(row2[0])
+            prev_date = str(row2[1])
+        else:
+            prev_score = ""
+            prev_date = ""
+        table += "<tr><td>" + timestamp + "</td><td>" + level_id_to_str(row[0]) + "</td><td><a href='/player?pseudo=" + pseudo + "'>" + pseudo + "</a></td><td>" + place + "</td><td><a href='/demo?player=" + pseudo + '&level_id=' + level_id + '&timestamp=' + timestamp + "'>" + score + "</a></td><td><a href='/demo?player=" + pseudo + '&level_id=' + level_id + '&timestamp=' + prev_date + "'>" + prev_score + "</a></td><td>" + prev_date + "</td></tr>"
     return render_template("new.html", table=table)
 
 @app.route('/demo', methods=['POST', 'GET'])

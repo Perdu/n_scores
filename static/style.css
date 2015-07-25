@@ -35,3 +35,8 @@ table.center {
 .sub_navbar:hover {
     background:#E0E0E0;
 }
+.source {
+    margin: 10px;
+    float:right;
+    font-size: 0.6em;
+}

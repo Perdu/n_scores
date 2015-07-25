@@ -8,5 +8,8 @@ If you want to install the app on your server:
   Add something like this:
 00 * * * * cd /path/to/save/hs_files/ && python /path/to/n_scores/auto_download.py --save-demos >/dev/null
 05 05 * * * python /path/to/n_scores/fill_database.py "$(ls -t -1 -d /path/to/save/hs_files/* | head -n 1)"
-- for the web app, install flask, and run index.py:
+- for the web app:
+  - install flask
+  - fill config.py.example and rename it config.py
+  - run index.py:
 python index.py

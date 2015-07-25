@@ -146,7 +146,14 @@ def disp_player():
 def display_all_score():
     level = cgi.escape(request.args.get('level', ''))
     level_id = str_to_level_id(level)
-    cur.execute("SELECT timestamp, pseudo, score, place FROM score_unique WHERE level_id = %s ORDER BY score DESC", (level_id))
+    player = request.args.get('player', '')
+    place = request.args.get('place', '')
+    if player == "" and place == "":
+        cur.execute("SELECT timestamp, pseudo, score, place FROM score_unique WHERE level_id = %s ORDER BY score DESC", (level_id))
+    elif player != "":
+        cur.execute("SELECT timestamp, pseudo, score, place FROM score_unique WHERE level_id = %s AND pseudo = %s ORDER BY score DESC", (level_id, player))
+    else:
+        cur.execute("SELECT timestamp, pseudo, score, place FROM score_unique WHERE level_id = %s AND place = %s ORDER BY score DESC", (level_id, place))
     rows = cur.fetchall()
     table = ""
     for row in rows:

@@ -154,7 +154,7 @@ def display_all_score():
         pseudo = cgi.escape(row[1])
         score = score_to_str(row[2])
         place = str(row[3])
-        table += "<tr><td>" + timestamp + "</td><td><a href='/demo?player=" + pseudo + '&level_id=' + level + '&timestamp=' + timestamp + "'>" + score + "</a></td><td><a href='/player?pseudo=" + pseudo + "'>" + pseudo + "</a></td><td>" + place + "</td></tr>"
+        table += "<tr><td>" + timestamp + "</td><td><a href='/demo?player=" + pseudo + '&level_id=' + str(level_id) + '&timestamp=' + timestamp + "'>" + score + "</a></td><td><a href='/player?pseudo=" + pseudo + "'>" + pseudo + "</a></td><td>" + place + "</td></tr>"
     return render_template("all_scores.html", table=table, level=level)
 
 @app.route('/level', methods=['POST', 'GET'])

@@ -29,18 +29,24 @@
       </tr>
       {{ table|safe }}
     </table>
-    <h2>Filter by player:</h2>
-    <form action="" method="get">
-      <input type="hidden" name="level" value="{{ level }}" />
-      <input type="text" name="player" />
-      <input type="submit" value="Go" />
-    </form>
-    <h2>Filter by place:</h2>
-    <form action="" method="get">
-      <input type="hidden" name="level" value="{{ level }}" />
-      <input type="text" name="place" />
-      <input type="submit" value="Go" />
-    </form>
+    <div class="navbar">
+      <div class="sub_navbar">
+	<h2>Filter by player:</h2>
+	<form action="" method="get">
+	  <input type="hidden" name="level" value="{{ level }}" />
+	  <input type="text" name="player" />
+	  <input type="submit" value="Go" />
+	</form>
+      </div>
+      <div class="sub_navbar">
+	<h2>Filter by place:</h2>
+	<form action="" method="get">
+	  <input type="hidden" name="level" value="{{ level }}" />
+	  <input type="text" name="place" />
+	  <input type="submit" value="Go" />
+	</form>
+      </div>
+    </div>
     {% include 'form.html' %}
   </body>
 </html>

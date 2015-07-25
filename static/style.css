@@ -21,7 +21,7 @@ table.center {
     margin-left:auto;
     margin-right:auto;
 }
-#navbar {
+.navbar {
     padding: 5px;
     text-align:center;
 }

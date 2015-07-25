@@ -2,4 +2,3 @@
 - evolution of the global "difficulty" of the game (difficuly = 0th time - 19th time)
 - List of "enemies" of a player: players who made him lose 0th or kicked him out of the scoreboard
 - level which changed hand the most
-- Download replays!

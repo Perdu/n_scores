@@ -1,0 +1,12 @@
+If you want to install the app on your server:
+- create database by executing database.sql;
+- In your crontab, add lines to execute auto_download.py every hour
+  and fill_database.py every day. fill_database.py downloads a copy of
+  all scores every time, so you don't want to execute it too often. On
+  the other hand, auto_download.py only downloads new scores (we need
+  both tables in the database to speed up calculations)
+  Add something like this:
+00 * * * * cd /path/to/save/hs_files/ && python /path/to/n_scores/auto_download.py --save-demos >/dev/null
+05 05 * * * python /path/to/n_scores/fill_database.py "$(ls -t -1 -d /path/to/save/hs_files/* | head -n 1)"
+- for the web app, install flask, and run index.py:
+python index.py

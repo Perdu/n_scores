@@ -149,11 +149,11 @@ def display_all_score():
     player = request.args.get('player', '')
     place = request.args.get('place', '')
     if player == "" and place == "":
-        cur.execute("SELECT timestamp, pseudo, score, place FROM score_unique WHERE level_id = %s ORDER BY score DESC", (level_id))
+        cur.execute("SELECT timestamp, pseudo, score, place, ISNULL(demo) FROM score_unique WHERE level_id = %s ORDER BY score DESC", (level_id))
     elif player != "":
-        cur.execute("SELECT timestamp, pseudo, score, place FROM score_unique WHERE level_id = %s AND pseudo = %s ORDER BY score DESC", (level_id, player))
+        cur.execute("SELECT timestamp, pseudo, score, place, ISNULL(demo) FROM score_unique WHERE level_id = %s AND pseudo = %s ORDER BY score DESC", (level_id, player))
     else:
-        cur.execute("SELECT timestamp, pseudo, score, place FROM score_unique WHERE level_id = %s AND place = %s ORDER BY score DESC", (level_id, place))
+        cur.execute("SELECT timestamp, pseudo, score, place, ISNULL(demo) FROM score_unique WHERE level_id = %s AND place = %s ORDER BY score DESC", (level_id, place))
     rows = cur.fetchall()
     table = ""
     for row in rows:
@@ -161,7 +161,12 @@ def display_all_score():
         pseudo = cgi.escape(row[1])
         score = score_to_str(row[2])
         place = str(row[3])
-        table += "<tr><td>" + timestamp + "</td><td><a href='/demo?player=" + pseudo + '&level_id=' + str(level_id) + '&timestamp=' + timestamp + "'>" + score + "</a></td><td><a href='/player?pseudo=" + pseudo + "'>" + pseudo + "</a></td><td>" + place + "</td></tr>"
+        demo_exists = not bool(row[4])
+        if demo_exists:
+            link = "<a href='/demo?player=" + pseudo + '&level_id=' + str(level_id) + '&timestamp=' + timestamp + "'>" + score + "</a>"
+        else:
+            link = score
+        table += "<tr><td>" + timestamp + "</td><td>" + link +"</td><td><a href='/player?pseudo=" + pseudo + "'>" + pseudo + "</a></td><td>" + place + "</td></tr>"
     return render_template("all_scores.html", table=table, level=level)
 
 @app.route('/level', methods=['POST', 'GET'])

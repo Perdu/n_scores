@@ -22,13 +22,16 @@ table.center {
     margin-right:auto;
 }
 #navbar {
- #   background: #eff;
     padding: 5px;
-#    border:1px solid #42432d;
+    text-align:center;
 }
 .sub_navbar {
-    float: left;
     margin: 15px;
     padding: 5px;
     border:1px solid #42432d;
+    display:inline-block;
+    text-align:left;
+}
+.sub_navbar:hover {
+    background:#E0E0E0;
 }

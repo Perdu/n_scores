@@ -142,6 +142,21 @@ def disp_player():
         print err;
         return render_template("player.html")
 
+@app.route('/all_scores', methods=['POST', 'GET'])
+def display_all_score():
+    level = cgi.escape(request.args.get('level', ''))
+    level_id = str_to_level_id(level)
+    cur.execute("SELECT timestamp, pseudo, score, place FROM score_unique WHERE level_id = %s ORDER BY score DESC", (level_id))
+    rows = cur.fetchall()
+    table = ""
+    for row in rows:
+        timestamp = str(row[0])
+        pseudo = cgi.escape(row[1])
+        score = score_to_str(row[2])
+        place = str(row[3])
+        table += "<tr><td>" + timestamp + "</td><td><a href='/demo?player=" + pseudo + '&level_id=' + level + '&timestamp=' + timestamp + "'>" + score + "</a></td><td><a href='/player?pseudo=" + pseudo + "'>" + pseudo + "</a></td><td>" + place + "</td></tr>"
+    return render_template("all_scores.html", table=table, level=level)
+
 @app.route('/level', methods=['POST', 'GET'])
 def disp_level():
     level = request.args.get('level', '')

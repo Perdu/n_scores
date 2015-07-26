@@ -20,8 +20,18 @@ cur = None
 def connect_db():
     return mdb.connect('localhost', config.user, config.password, 'n_scores2')
 
+def usage():
+    print "usage: " + sys.argv[0] + "[--fill-score][--fill-score-unique][--save-hs-file][--help]"
+    print "\t--fill-score: fill database with all scores. Don't do this too often (e.g. daily)"
+    print "\t--fill-score-unique: fill database with new scores only. Do this often (e.g. hourly)"
+    print "\t--save-hs-file: keep .hs file (readable by NHigh)"
+    print "\t--help: display this help message"
+
 def run():
     global cur
+    if len(sys.argv) == 1:
+        usage()
+        sys.exit(1)
     print "Downloading data from metanet server..."
     downloader = HSDownloader()
     table = []
@@ -32,7 +42,7 @@ def run():
     cur = config.con.cursor()
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], '', ["fill-score", "fill-score-unique", "save-hs-file"])
+        opts, args = getopt.getopt(sys.argv[1:], '', ["fill-score", "fill-score-unique", "save-hs-file", "help"])
     except getopt.GetoptError as err:
         print "Error: " + str(err)
         sys.exit(1)
@@ -47,6 +57,9 @@ def run():
         elif o == "--save-hs-file":
             print "Saving data to file " + cur_time + ".hs"
             saveScores(table, cur_time + ".hs")
+        elif o == "--help":
+            usage()
+            sys.exit(0)
 
     config.con.close()
 

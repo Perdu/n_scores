@@ -10,6 +10,8 @@ import datetime
 import sys
 import _mysql
 import MySQLdb as mdb
+import getopt
+
 import config
 
 cur_time = str(datetime.datetime.now())
@@ -20,17 +22,34 @@ def connect_db():
 
 def run():
     global cur
+    print "Downloading data from metanet server..."
     downloader = HSDownloader()
     table = []
     for i in downloader:
         print i
     table = downloader.result()
-    saveScores(table, cur_time + ".hs")
-    if len(sys.argv) > 1 and sys.argv[1] == "--save-demos":
-        config.con = connect_db()
-        cur = config.con.cursor()
-        print "Checking new demos..."
-        download_demos(table.table)
+    config.con = connect_db()
+    cur = config.con.cursor()
+
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], '', ["fill-score", "fill-score-unique", "save-hs-file"])
+    except getopt.GetoptError as err:
+        print "Error: " + str(err)
+        sys.exit(1)
+
+    for o, arg in opts:
+        if o == "--fill-score-unique":
+            print "Checking new demos..."
+            download_demos(table.table)
+        elif o == "--fill-score":
+            print "Adding all scores to table score..."
+            fill_score(table.table)
+        elif o == "--save-hs-file":
+            print "Saving data to file " + cur_time + ".hs"
+            saveScores(table, cur_time + ".hs")
+
+    config.con.close()
+
 
 def convert_level_nb(episode_nb, level_nb):
     return episode_nb*10 + level_nb
@@ -52,7 +71,6 @@ def download_demos(scores):
         episode_nb = episode_nb + 1
         level_nb = 0
     config.con.commit()
-    config.con.close()
 
 def add_demo(episode_nb, level_nb, pseudo, score, timestamp, place):
     (player, score, demo) = downloadReplayByName(episode_nb, level_nb, pseudo)
@@ -72,13 +90,29 @@ def demo_exists(level_id, pseudo, score):
     cur.execute("SELECT 1 FROM score_unique WHERE level_id=%s AND pseudo=%s AND score=%s", (level_id, pseudo, score))
     return (cur.rowcount > 0)
 
-# Duplicate with fill_database (TODO)
-def add_score_unique(score, episode_nb, level_nb, timestamp, place):
+def add_score(score, episode_nb, level_nb, timestamp, place):
     try:
         db_level_nb = convert_level_nb(episode_nb, level_nb)
-        cur.execute("INSERT INTO score_unique VALUES(%s, %s, TIMESTAMP(%s), %s, %s)", (db_level_nb, score.name, timestamp, score.score, place))
+        cur.execute("INSERT INTO score VALUES(%s, %s, TIMESTAMP(%s), %s, %s)", (db_level_nb, score.name, timestamp, score.score, place))
     except mdb.IntegrityError as err:
+        # There ARE duplicate entries on the scoreboard.
+        # It's sad, but the best is to ignore them.
         pass
+
+def fill_score(scores):
+    level_nb = 0
+    episode_nb = 0
+    for episode in scores:
+        for level in episode:
+            place = 0
+            for score in level:
+                if score.name != '':
+                    add_score(score, episode_nb, level_nb, cur_time, place)
+                place = place + 1
+            level_nb = level_nb + 1
+        episode_nb = episode_nb + 1
+        level_nb = 0
+    config.con.commit()
 
 
 if __name__=='__main__':

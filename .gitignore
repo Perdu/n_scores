@@ -3,3 +3,4 @@ config.py
 *.sql
 *.hs
 *.7z
+*.wsgi

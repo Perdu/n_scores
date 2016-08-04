@@ -14,3 +14,9 @@ If you want to install the app on your server:
   - fill config.py.example and rename it config.py
   - run index.py:
 python index.py
+
+If you want it to run inside apache2 (adds threads, which prevent the
+app from regularly blocking):
+- fill n_scores.wsgi.example and rename it n_scores.wsgi
+- follow these instructions:
+http://flask.pocoo.org/docs/0.10/deploying/mod_wsgi/

@@ -12,7 +12,7 @@ import decimal
 from config import *
 import cgi
 
-from flask import Flask, render_template, request, url_for
+from flask import Flask, render_template, request, url_for, redirect
 app = Flask(__name__)
 
 app.debug = is_debug_activated
@@ -313,6 +313,10 @@ def before_request():
     global con, cur
     con = connect_db()
     cur = con.cursor()
+    if request.url.startswith('http://'):
+        url = request.url.replace('http://', 'https://', 1)
+        code = 301
+        return redirect(url, code=code)
 
 @app.after_request
 def after_request(res):

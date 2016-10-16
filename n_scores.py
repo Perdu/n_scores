@@ -227,6 +227,29 @@ def disp_level():
 
 @app.route('/stats', methods=['POST', 'GET'])
 def disp_stats():
+    # 0th table
+    cur.execute("SELECT COUNT(*), YEAR(timestamp) FROM score_unique WHERE place = 0 GROUP BY YEAR(timestamp);")
+    table_0th = {}
+    row = cur.fetchone()
+    while row is not None:
+        table_0th[row[1]] = row[0]
+        row = cur.fetchone()
+    scores_series = "{ name: '0th', data: ["
+    for date in table_0th:
+        scores_series += "[Date.UTC(" + str(date) + ", 0, 1), " + str(table_0th[date]) + "],"
+    scores_series += "]},\n"
+    # 20th table
+    cur.execute("SELECT COUNT(*), YEAR(timestamp) FROM score_unique GROUP BY YEAR(timestamp);")
+    table_20th = {}
+    row = cur.fetchone()
+    while row is not None:
+        table_20th[row[1]] = row[0]
+        row = cur.fetchone()
+    scores_series += "{ name: '20th', data: ["
+    for date in table_20th:
+        scores_series += "[Date.UTC(" + str(date) + ", 0, 1), " + str(table_20th[date]) + "],"
+    scores_series += "]}"
+    # Number of 0th
     cur.execute("SELECT COUNT(pseudo) AS a, COUNT(DISTINCT pseudo), level_id FROM score_unique WHERE place = 0 GROUP BY level_id ORDER BY a DESC;")
     table = ""
     row = cur.fetchone()
@@ -234,7 +257,7 @@ def disp_stats():
         level = level_id_to_str(row[2])
         table += "<tr><td>" + str(row[0]) + "</td><td>" + str(row[1]) + "</td><td><a href='/level?level=" + level + "&top=1'>" + level + "</a></td></tr>"
         row = cur.fetchone()
-    return render_template("stats.html", table=table)
+    return render_template("stats.html", table=table, scores_series=scores_series)
 
 @app.route('/new', methods=['POST', 'GET'])
 def new():

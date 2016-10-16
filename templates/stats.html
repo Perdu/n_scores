@@ -13,8 +13,59 @@
       border: 1px solid black;
       }
     </style>
+    <script type="text/javascript">
+      $(function () {
+      $('#container').highcharts({
+      chart: {
+      type: 'spline',
+      zoomType: 'x,y'
+      },
+      plotOptions: {
+      spline: {
+      marker: {
+      enabled: false
+      }
+      }
+      },
+      title: {
+      text: 'Number of new scores over time {{ level }}',
+      x: -20 //center
+      },
+      xAxis: {
+      type: 'datetime',
+      dateTimeLabelFormats: { // don't display the dummy year
+      year: '%Y',
+      },
+      title: {
+      text: 'Date'
+      }
+      },
+      yAxis: {
+      title: {
+      text: 'Number of Top-20 Highscores'
+      },
+      plotLines: [{
+      value: 0,
+      width: 1,
+      color: '#808080'
+      }]
+      },
+      legend: {
+      layout: 'vertical',
+      align: 'right',
+      verticalAlign: 'middle',
+      borderWidth: 0
+      },
+      series: [{{ scores_series|safe }}]
+      });
+      });
+    </script>
   </head>
   <body>
+    <h1>Number of new scores over time</h1>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <div id="container" style="height: 800px;"></div>
     <h1>Most fought level</h1>
     <table class="center">
       <tr>

@@ -235,7 +235,7 @@ def disp_stats():
         table_0th[row[1]] = row[0]
         row = cur.fetchone()
     scores_series = "{ name: '0th', data: ["
-    for date in table_0th:
+    for date in sorted(table_0th):
         scores_series += "[Date.UTC(" + str(date) + ", 0, 1), " + str(table_0th[date]) + "],"
     scores_series += "]},\n"
     # 20th table
@@ -246,7 +246,7 @@ def disp_stats():
         table_20th[row[1]] = row[0]
         row = cur.fetchone()
     scores_series += "{ name: '20th', data: ["
-    for date in table_20th:
+    for date in sorted(table_20th):
         scores_series += "[Date.UTC(" + str(date) + ", 0, 1), " + str(table_20th[date]) + "],"
     scores_series += "]}"
     # Number of 0th

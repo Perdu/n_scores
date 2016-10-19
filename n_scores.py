@@ -248,6 +248,17 @@ def disp_stats():
     scores_series += "{ name: '20th', data: ["
     for date in sorted(table_20th):
         scores_series += "[Date.UTC(" + str(date) + ", 0, 1), " + str(table_20th[date]) + "],"
+    scores_series += "]},\n"
+    # unique 0th table
+    cur.execute("SELECT COUNT(DISTINCT level_id), YEAR(timestamp) FROM score_unique WHERE place = 0 GROUP BY YEAR(timestamp);")
+    table_unique_0th = {}
+    row = cur.fetchone()
+    while row is not None:
+        table_unique_0th[row[1]] = row[0]
+        row = cur.fetchone()
+    scores_series += "{ name: 'Number of distinct levels whose 0th changed', data: ["
+    for date in sorted(table_0th):
+        scores_series += "[Date.UTC(" + str(date) + ", 0, 1), " + str(table_unique_0th[date]) + "],"
     scores_series += "]}"
     # Number of 0th
     cur.execute("SELECT COUNT(pseudo) AS a, COUNT(DISTINCT pseudo), level_id FROM score_unique WHERE place = 0 GROUP BY level_id ORDER BY a DESC;")

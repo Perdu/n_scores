@@ -300,6 +300,36 @@ def new():
         table += "<tr><td>" + timestamp + "</td><td><a href='/level?level=" + str_level_id + "&top=" + top + "'>" + str_level_id + "</a></td><td><a href='/player?pseudo=" + pseudo + "'>" + pseudo + "</a></td><td>" + place + "</td><td><a href='/demo?player=" + pseudo + '&level_id=' + level_id + '&timestamp=' + timestamp + "'>" + score + "</a></td><td>" + link + "</td><td>" + prev_date + "</td></tr>"
     return render_template("new.html", table=table)
 
+@app.route('/latest0th', methods=['POST', 'GET'])
+def latest0th():
+    cur.execute("SELECT level_id, pseudo, timestamp, score, place FROM score_unique WHERE place = 0 ORDER BY timestamp DESC, level_id LIMIT 20;")
+    rows = cur.fetchall()
+    table = ""
+    for row in rows:
+        level_id = str(row[0])
+        str_level_id = level_id_to_str(row[0])
+        pseudo = cgi.escape(row[1])
+        timestamp = str(row[2])
+        score = score_to_str(row[3])
+        place = str(row[4])
+        top = str(int(place) + 1)
+        cur.execute("SELECT score, timestamp, ISNULL(demo) from score_unique where level_id = %s and pseudo = %s and timestamp < %s ORDER BY timestamp DESC limit 1;", (level_id, pseudo, timestamp))
+        if cur.rowcount > 0:
+            row2 = cur.fetchone()
+            prev_score = score_to_str(row2[0])
+            prev_date = str(row2[1])
+            demo_exists = not bool(row2[2])
+            if demo_exists:
+                link = "<a href='/demo?player=" + pseudo + '&level_id=' + level_id + '&timestamp=' + prev_date + "'>" + prev_score + "</a>"
+            else :
+                link = prev_score
+        else:
+            prev_score = ""
+            prev_date = ""
+            link = ""
+        table += "<tr><td>" + timestamp + "</td><td><a href='/level?level=" + str_level_id + "&top=" + top + "'>" + str_level_id + "</a></td><td><a href='/player?pseudo=" + pseudo + "'>" + pseudo + "</a></td><td>" + place + "</td><td><a href='/demo?player=" + pseudo + '&level_id=' + level_id + '&timestamp=' + timestamp + "'>" + score + "</a></td><td>" + link + "</td><td>" + prev_date + "</td></tr>"
+    return render_template("latest0th.html", table=table)
+
 @app.route('/demo', methods=['POST', 'GET'])
 def demo():
     try:

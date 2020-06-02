@@ -10,7 +10,7 @@ import datetime
 import calendar
 import decimal
 from config import *
-import cgi
+import html
 
 from flask import Flask, render_template, request, url_for
 app = Flask(__name__)
@@ -79,10 +79,10 @@ def level_id_to_str(level_id):
 def str_to_level_id(level_str):
     t = level_str.split('-')
     try:
-        return int(t[0])*10 + int(t[1])
+        return int(int(t[0])*10 + int(t[1]))
     except:
         # episode
-        return int(t[0])*10 + 5
+        return int(int(t[0])*10 + 5)
 
 def score_to_str(score):
     score = str(int(score) * 0.025)
@@ -144,8 +144,8 @@ def disp_player():
 
 @app.route('/all_scores', methods=['POST', 'GET'])
 def display_all_score():
-    level = cgi.escape(request.args.get('level', ''))
-    level_id = str_to_level_id(level)
+    level = html.escape(request.args.get('level', ''))
+    level_id = str(str_to_level_id(level))
     player = request.args.get('player', '')
     place = request.args.get('place', '')
     if player == "" and place == "":
@@ -158,7 +158,7 @@ def display_all_score():
     table = ""
     for row in rows:
         timestamp = str(row[0])
-        pseudo = cgi.escape(row[1])
+        pseudo = html.escape(row[1])
         score = score_to_str(row[2])
         place = str(row[3])
         demo_exists = not bool(row[4])
@@ -181,7 +181,7 @@ def disp_level():
     else:
         top = 20
     top_opt = ""
-    converted_level = str_to_level_id(level)
+    converted_level = str(str_to_level_id(level))
     by_place_form = ""
     avg_form = ""
     diff_form = ""
@@ -278,7 +278,7 @@ def new():
     for row in rows:
         level_id = str(row[0])
         str_level_id = level_id_to_str(row[0])
-        pseudo = cgi.escape(row[1])
+        pseudo = html.escape(row[1])
         score = score_to_str(row[2])
         timestamp = str(row[3])
         place = str(row[4])
@@ -308,7 +308,7 @@ def latest0th():
     for row in rows:
         level_id = str(row[0])
         str_level_id = level_id_to_str(row[0])
-        pseudo = cgi.escape(row[1])
+        pseudo = html.escape(row[1])
         timestamp = str(row[2])
         score = score_to_str(row[3])
         place = str(row[4])

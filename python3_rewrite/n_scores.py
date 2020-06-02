@@ -59,9 +59,10 @@ def disp_graph(rows):
     p = player()
     p.reset()
     for row in rows:
-        #if isinstance(row[0], int):
-        name = html.escape(row[0])
-        #else:
+        if isinstance(row[0], int):
+            name = str(row[0])
+        else:
+            name = html.escape(row[0])
         #    name = unicode(row[0], errors='ignore')
         if name != p.name and p.name != "":
             res = res + "{ name: " + "'" + p.name + "'" + ", data:" + json.dumps(p.data, default=decimal_default) + "},\n"

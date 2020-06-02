@@ -85,7 +85,7 @@ def str_to_level_id(level_str):
         return int(int(t[0])*10 + 5)
 
 def score_to_str(score):
-    score = str(int(score) * 0.025)
+    score = str(round(int(score) * 0.025, 3))
     nb_digits = len(score.split('.')[1])
     if nb_digits == 1:
         score = score + "00"

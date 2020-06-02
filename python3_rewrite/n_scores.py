@@ -49,10 +49,10 @@ def disp_graph(cur):
     p.reset()
     row = cur.fetchone()
     while row is not None:
-        if isinstance(row[0], long):
-            name = str(row[0])
-        else:
-            name = unicode(row[0], errors='ignore')
+        #if isinstance(row[0], int):
+        name = html.escape(row[0])
+        #else:
+        #    name = unicode(row[0], errors='ignore')
         if name != p.name and p.name != "":
             res = res + "{ name: " + "'" + p.name + "'" + ", data:" + json.dumps(p.data, default=decimal_default) + "},\n"
             p.reset()
@@ -358,7 +358,8 @@ def display_all():
     p = player()
     row = cur.fetchone()    
     while row is not None:
-        name = unicode(row[0], errors='ignore')
+        #name = unicode(row[0], errors='ignore')
+        name = html.escape(row[0])
         if name != p.name and p.name != "":
             res = res + "{ name: " + "'" + p.name + "'" + ", data:" + json.dumps(p.data) + "},\n"
             p.data = []

@@ -198,15 +198,15 @@ def disp_level():
         top_opt = " AND place <= " + str(top)
 
     # Number of player who ever got a top 20
-    cur.execute("SELECT pseudo FROM score_unique WHERE level_id = %s GROUP BY pseudo;", converted_level)
+    cur.execute("SELECT pseudo FROM score_unique WHERE level_id = %s GROUP BY pseudo;", (converted_level,))
     nb20 = cur.rowcount
 
     # Number of player who ever got a 0th
-    cur.execute("SELECT pseudo FROM score_unique WHERE level_id = %s AND place = 0 GROUP BY pseudo;", converted_level)
+    cur.execute("SELECT pseudo FROM score_unique WHERE level_id = %s AND place = 0 GROUP BY pseudo;", (converted_level,))
     nb0 = cur.rowcount
 
     if diff == str(1):
-        cur.execute("SELECT 'max(score) - min(score)', timestamp, (MAX(score) - min(score))*0.025 FROM score where level_id = %s group by timestamp", converted_level)
+        cur.execute("SELECT 'max(score) - min(score)', timestamp, (MAX(score) - min(score))*0.025 FROM score where level_id = %s group by timestamp", (converted_level,))
         return render_template("all.html", series=disp_graph(cur),
                                level=level, by_place=by_place_form,
                                avg=avg_form, top=top_form, diff=diff_form,
@@ -215,12 +215,12 @@ def disp_level():
         if avg == str(1):
             cur.execute("SELECT pseudo, timestamp, score*0.025 FROM score WHERE level_id = %s" + top_opt + " UNION SELECT 'average score', timestamp, AVG(score)*0.025 from score where level_id = %s" + top_opt + " GROUP BY timestamp", (converted_level, converted_level))
         else:
-            cur.execute("SELECT pseudo, timestamp, score*0.025 FROM score WHERE level_id = %s" + top_opt, converted_level)
+            cur.execute("SELECT pseudo, timestamp, score*0.025 FROM score WHERE level_id = %s" + top_opt, (converted_level,))
     else:
         if avg == str(1):
             cur.execute("SELECT place, timestamp, score*0.025 FROM score WHERE level_id = %s" + top_opt + " UNION SELECT 'average score', timestamp, AVG(score)*0.025 from score where level_id = %s" + top_opt + " GROUP BY timestamp ORDER BY place, timestamp", (converted_level, converted_level))
         else:
-            cur.execute("SELECT place, timestamp, score*0.025 FROM score WHERE level_id = %s " + top_opt + " ORDER BY place, timestamp;", converted_level)
+            cur.execute("SELECT place, timestamp, score*0.025 FROM score WHERE level_id = %s " + top_opt + " ORDER BY place, timestamp;", (converted_level,))
     return render_template("all.html", series=disp_graph(cur), level=level,
                            by_place=by_place_form, avg=avg_form, top=top_form,
                            diff=diff_form, nb20=nb20, nb0=nb0)

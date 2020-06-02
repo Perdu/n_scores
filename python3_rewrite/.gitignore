@@ -1,0 +1,6 @@
+config.py
+*.pyc
+*.sql
+*.hs
+*.7z
+*.wsgi

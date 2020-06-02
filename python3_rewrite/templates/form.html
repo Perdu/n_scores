@@ -1,0 +1,47 @@
+<div class="navbar">
+  <div class="sub_navbar">
+    <h2>Display a level:</h2>
+    <form action="#" onsubmit="return redirect();">
+      <input type="text" id="l" value="{{ level }}"/>
+      <input type="submit" value="Go" />
+      <br />
+      Options:<br/>
+      <input type="checkbox" id="by_place" {{ by_place }} />
+      <label for="by_place">By place</label>
+      <input type="checkbox" id="avg" {{ avg }} />
+      <label for="avg">Show average score</label>
+      <br />
+      <label for="top">Show top: </label>
+      <input type="text" id="top" value="{{ top }}" />
+      <br />
+      <input type="checkbox" id="diff" {{ diff }} />
+      <label for="diff">Show 19th to 0th difference</label>
+    </form>
+  </div>
+    <div class="sub_navbar">
+    <h2>Past scores for a level:</h2>
+    <form action="/all_scores" method="get">
+      <input type="text" name="level" value="{{ level }}"/>
+      <input type="submit" value="Go" />
+    </form>
+  </div>
+  <div class="sub_navbar">
+    <h2>Display a player:</h2>
+    <form action="#" onsubmit="return redirect_player();">
+      <input type="text" id="player" value="{{ pseudo }}">
+      <input type="submit" value="Go" />
+    </form>
+  </div>
+  <div class="sub_navbar">
+    <h2><a href="/stats">Stats Page</a></h2>
+  </div>
+  <div class="sub_navbar">
+    <h2><a href="/new">New scores</a></h2>
+  </div>
+  <div class="sub_navbar">
+    <h2><a href="/latest0th">Latest 0th</a></h2>
+  </div>
+</div>
+<div class="source">
+  Made by zapkt. <a href="https://github.com/Perdu/n_scores/">Source</a>
+</div>

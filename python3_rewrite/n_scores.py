@@ -154,9 +154,9 @@ def display_all_score():
     player = request.args.get('player', '')
     place = request.args.get('place', '')
     if player == "" and place == "":
-        execute("SELECT timestamp, pseudo, score, place, ISNULL(demo) FROM score_unique WHERE level_id = %s ORDER BY score DESC", (level_id))
+        rows = execute("SELECT timestamp, pseudo, score, place, ISNULL(demo) FROM score_unique WHERE level_id = %s ORDER BY score DESC", (level_id,), return_rows = True)
     elif player != "":
-        execute("SELECT timestamp, pseudo, score, place, ISNULL(demo) FROM score_unique WHERE level_id = %s AND pseudo = %s ORDER BY score DESC", (level_id, player))
+        rows = execute("SELECT timestamp, pseudo, score, place, ISNULL(demo) FROM score_unique WHERE level_id = %s AND pseudo = %s ORDER BY score DESC", (level_id, player), return_rows = True)
     else:
         rows = execute("SELECT timestamp, pseudo, score, place, ISNULL(demo) FROM score_unique WHERE level_id = %s AND place = %s ORDER BY score DESC", (level_id, place), return_rows = True)
     table = ""

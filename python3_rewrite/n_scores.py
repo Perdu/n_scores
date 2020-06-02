@@ -67,7 +67,7 @@ def disp_graph(cur):
     return res
 
 def level_id_to_str(level_id):
-    level = level_id - int(level_id/10*10) # keep only last digit
+    level = int(level_id) - int(int(level_id/10)*10) # keep only last digit
     episode = int(level_id/10)
     first_0 = ""
     if episode < 10:

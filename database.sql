@@ -19,6 +19,6 @@ CREATE TABLE `score_unique` (
        `timestamp` timestamp DEFAULT CURRENT_TIMESTAMP,
        score int(10) unsigned NOT NULL,
        place int(1) NOT NULL,
-       demo varchar(100000),
+       demo TEXT,
        PRIMARY KEY (`level_id`, `pseudo`, `score`)
 );

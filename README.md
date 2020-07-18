@@ -27,3 +27,7 @@ python index.py
 If you want it to run inside apache2 (adds threads, which prevent the app from regularly blocking):
 - fill `n_scores.wsgi.example` and rename it `n_scores.wsgi`
 - follow these instructions: http://flask.pocoo.org/docs/0.10/deploying/mod_wsgi/
+
+## Removing hackers
+
+Execute `python add_hacker.py <name>`. This will remove every score from the given name from the database and add it to the blacklist for future scores.

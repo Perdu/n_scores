@@ -1,11 +1,12 @@
-# n_scores
-The Great N Highscores Archive
+# The Great N Highscores Archive
+
+A Flask application to run the Great N Highscores Archive. See live version here: http://ploudseeker.com:5000/.
+
+N is a video game released in 2004. See http://www.metanetsoftware.com/.
 
 This repo contains:
 - scripts to automatically download N 1.4 highscores and their demo data into a database,
-- a web application to display all that information in various interesting ways.
-
-N is a video game. Please visit http://www.metanetsoftware.com/.
+- the Web application to display all that information in various interesting ways.
 
 ## Install
 

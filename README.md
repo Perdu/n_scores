@@ -12,6 +12,11 @@ This repo contains:
 
 If you want to install the app on your server:
 - create database by executing `database.sql`;
+- create database user and give it access right to the `n_scores2` catabase:
+```sql
+CREATE USER '<user>' IDENTIFIED BY '<password>'
+GRANT ALL ON n_scores2.* TO '<user>'
+```
 - In your crontab, add lines to execute `auto_download.py` every hour with option `--fill-score-unique` every hour and with option `--fill-score` every day. `--fill-score` downloads a copy of all scores every time, so you don't want to execute it too often. On the other hand, `--fill-score-unique` only downloads new scores (we need both tables in the database to speed up calculations). Add something like this (this will also save one .hs file per day):
 ```bash
 00 * * * * python /path/to/n_scores/auto_download.py --fill-score-unique >/dev/null

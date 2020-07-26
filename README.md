@@ -1,6 +1,6 @@
 # The Great N Highscores Archive
 
-A Flask application to run the Great N Highscores Archive. See live version here: http://ploudseeker.com:5000/.
+A Flask application to run the Great N Highscores Archive. See live version here: https://ploudseeker.com:5000/.
 
 N is a video game released in 2004. See http://www.metanetsoftware.com/.
 

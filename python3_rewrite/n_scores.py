@@ -271,7 +271,43 @@ def disp_stats():
     for row in rows:
         level = level_id_to_str(row[2])
         table += "<tr><td>" + str(row[0]) + "</td><td>" + str(row[1]) + "</td><td><a href='/level?level=" + level + "&top=1'>" + level + "</a></td></tr>"
-    return render_template("stats.html", table=table, scores_series=scores_series)
+    # top players graph
+    rows = execute("SELECT COUNT(*) as c, YEAR(timestamp) as y, pseudo FROM score_unique WHERE place = 0 GROUP BY YEAR(timestamp), pseudo order by y, c DESC;", return_rows = True)
+    table_top_players = {}
+    year_i = 0
+    year_cur = 2006
+    players = {}
+    # We only keep the top 10 players for each year (otherwise the graph will
+    # be too crowded because there are too many scores in 2006)
+    for row in rows:
+        year = int(row[1])
+        player = row[2]
+        if year == year_cur and year_i >= 10 and player not in players:
+            continue
+        if year != year_cur:
+            year_cur = year
+            year_i = 0
+        count = row[0]
+        if player not in players:
+            players[player] = {}
+        players[player][year] = count
+        year_i += 1
+    res = ""
+    last_year = year_cur
+    # We create the graph by filling missing years with '0' for each player
+    for player in players:
+        res += "{ name: " + "'" + player + "'" + ", data: ["
+        for year in range(2006, last_year + 1):
+            y = int(year)
+            if y in players[player]:
+                count = players[player][y]
+            else:
+                count = 0
+            res += "[Date.UTC(" + str(year) + ", 0, 1), " + str(count) + "]"
+            if year != last_year:
+                res += ","
+        res += "]},\n"
+    return render_template("stats.html", table=table, scores_series=scores_series, top_players=res)
 
 @app.route('/new', methods=['POST', 'GET'])
 def new():

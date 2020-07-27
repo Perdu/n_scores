@@ -17,22 +17,26 @@ If you want to install the app on your server:
 CREATE USER '<user>'@localhost IDENTIFIED BY '<password>'
 GRANT ALL ON n_scores2.* TO '<user>'@localhost
 ```
+### Scores downloading
+- fill `config.py.example` and rename it `config.py`
 - In your crontab, add lines to execute `auto_download.py` every hour with option `--fill-score-unique` every hour and with option `--fill-score` every day. `--fill-score` downloads a copy of all scores every time, so you don't want to execute it too often. On the other hand, `--fill-score-unique` only downloads new scores (we need both tables in the database to speed up calculations). Add something like this (this will also save one .hs file per day):
 ```bash
-00 * * * * python /path/to/n_scores/auto_download.py --fill-score-unique >/dev/null
-05 05 * * * cd /path/to/save/hs_files/ && python /path/to/n_scores/auto_download.py --fill-score --save-hs-file
+00 * * * * python2 /path/to/n_scores/auto_download.py --fill-score-unique >/dev/null
+05 05 * * * cd /path/to/save/hs_files/ && python2 /path/to/n_scores/auto_download.py --fill-score --save-hs-file
 ```
-- for the web app:
-  - install flask
-  - fill `config.py.example` and rename it `config.py`
-  - run `index.py`:
+(Note: as the downloading library has not been converted to python3, this part requires python2)
+
+### Web application:
+- install Flask
+- In python3_rewrite/, fill `config.py.example` and rename it `config.py`
+- run `n_scores.py`:
 ```bash
-python index.py
+python n_scores.py
 ```
 
 If you want it to run inside apache2 (adds threads, which prevent the app from regularly blocking):
 - fill `n_scores.wsgi.example` and rename it `n_scores.wsgi`
-- follow these instructions: http://flask.pocoo.org/docs/0.10/deploying/mod_wsgi/
+- follow these instructions: https://flask.palletsprojects.com/en/1.1.x/deploying/mod_wsgi/
 
 ## Removing hackers
 

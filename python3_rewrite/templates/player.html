@@ -17,8 +17,8 @@
       <li>First top 20 scores: <b>{{ first_top_20_timestamp }} {% if first_top_20 %} {{ first_top_20 }} {% endif %}</b></li>
       <li>First 0ths: <b>{{ first_0th_timestamp }} {% if first_0th %} {{ first_0th }} {% endif %}</b></li>
       {% if diff_top20_0th %}<li>It took this player <b>{{ diff_top20_0th }}</b> days to go from top 20 to 0th</li>{% endif %}
-      <li>Number of 0th on distinct levels (after 2006): {{ nb_0th }}</li>
-      <li>Number of top-20 on distinct levels (after 2006): {{ nb_top20 }}</li>
+      <li>Number of 0th on distinct levels (after 2006): <b>{{ nb_0th }}</b></li>
+      <li>Number of top-20 on distinct levels (after 2006): <b>{{ nb_top20 }}</b></li>
     </ul>
     {% else %}
     <h2>Player not found</h2>

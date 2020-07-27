@@ -41,3 +41,5 @@ If you want it to run inside apache2 (adds threads, which prevent the app from r
 ## Removing hackers
 
 Execute `python add_hacker.py <name>`. This will remove every score from the given name from the database and add it to the blacklist for future scores.
+
+Note: hackers list is saved in NHigh's config file: `~/.nhigh/nhighconfig`

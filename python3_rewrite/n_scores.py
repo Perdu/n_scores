@@ -136,13 +136,21 @@ def disp_player():
                     first_0th += ', (' + str(level_id_to_str(row[1])) + ', ' + score_to_str(row[2]) + ')'
             diff_top20_0th = (first_0th_timedelta - first_top_20_timedelta).days
         else:
-            first_0th_timestamp = "Never"
+           first_0th_timestamp = "Never"
+
+        rows = execute("SELECT count(DISTINCT level_id) FROM score_unique WHERE pseudo = %s AND place = 0;", (pseudo,), return_rows = True)
+        nb_0th = int(rows[0][0])
+
+        rows = execute("SELECT count(DISTINCT level_id) FROM score_unique WHERE pseudo = %s;", (pseudo,), return_rows = True)
+        nb_top20 = int(rows[0][0])
         return render_template("player.html", pseudo=pseudo,
                                first_top_20_timestamp=first_top_20_timestamp,
                                first_top_20=first_top_20,
                                first_0th_timestamp=first_0th_timestamp,
                                first_0th=first_0th,
-                               diff_top20_0th=diff_top20_0th
+                               diff_top20_0th=diff_top20_0th,
+                               nb_0th=nb_0th,
+                               nb_top20=nb_top20
         )
     except Exception as err:
         print(err);

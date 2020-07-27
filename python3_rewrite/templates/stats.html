@@ -107,6 +107,53 @@
       });
       });
     </script>
+    <script type="text/javascript">
+      $(function () {
+      $('#container3').highcharts({
+      chart: {
+      type: 'spline',
+      zoomType: 'x,y'
+      },
+      plotOptions: {
+      spline: {
+      marker: {
+      enabled: false
+      }
+      }
+      },
+      title: {
+      text: 'Number of new top 20 scores over time',
+      x: -20 //center
+      },
+      xAxis: {
+      type: 'datetime',
+      dateTimeLabelFormats: { // don't display the dummy year
+      year: '%Y',
+      },
+      title: {
+      text: 'Date'
+      }
+      },
+      yAxis: {
+      title: {
+      text: 'Players getting most new top 20 scores per year'
+      },
+      plotLines: [{
+      value: 0,
+      width: 1,
+      color: '#808080'
+      }]
+      },
+      legend: {
+      layout: 'vertical',
+      align: 'right',
+      verticalAlign: 'middle',
+      borderWidth: 0
+      },
+      series: [{{ top_players_20|safe }}]
+      });
+      });
+    </script>
   </head>
   <body>
     {% include 'form.html' %}
@@ -114,9 +161,13 @@
     <script src="/static/highcharts.js"></script>
     <script src="/static/exporting.js"></script>
     <div id="container" style="height: 800px;"></div>
-    Note: these number depend on the number of downloaded highscore files. They are less accurate and smaller for years for which we do not have one .hs file per day. Also, the "2006" figure is equal to the number of existing scores on the first recording in 2006.
+    Note: these numbers depend on the number of downloaded highscore files. They are less accurate and smaller for years for which we do not have one .hs file per day. Also, the "2006" figure is equal to the number of existing scores on the first recording in 2006.
+    <br />
     <h1>Players getting most new 0th, per year</h1>
     <div id="container2" style="height: 800px;"></div>
+    <br />
+    <h1>Players getting most new top 20 scores, per year</h1>
+    <div id="container3" style="height: 800px;"></div>
     <h1>Most fought level</h1>
     <table class="center">
       <tr>

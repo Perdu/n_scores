@@ -415,11 +415,14 @@ def display_all():
 @app.before_request
 def before_request():
     global con
-    con = connect_db()
+    if request.endpoint not in ('static', None):
+        con = connect_db()
 
 @app.after_request
 def after_request(res):
-    con.close()
+    if request.endpoint not in ('static', None):
+        if con is not None:
+            con.close()
     return res
 
 if __name__ == "__main__":

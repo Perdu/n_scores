@@ -37,7 +37,7 @@ python n_scores.py
 If you want it to run inside apache2 (adds threads, which prevent the app from regularly blocking):
 - fill `n_scores.wsgi.example` and rename it `n_scores.wsgi`
 - follow these instructions: https://flask.palletsprojects.com/en/1.1.x/deploying/mod_wsgi/
-See also give an example VirtualHost config file for apache in `apache_example_config.conf`.
+See also an example VirtualHost config file for apache in `apache_example_config.conf`.
 
 ## Removing hackers
 

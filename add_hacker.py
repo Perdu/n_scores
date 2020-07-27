@@ -28,7 +28,7 @@ if __name__=='__main__':
     config.con = connect_db()
     cur = config.con.cursor()
 
-    cur.execute("SELECT level_id, timestamp, place, score FROM score_unique WHERE pseudo = %s order by level_id, timestamp", (sys.argv[1]))
+    cur.execute("SELECT level_id, timestamp, place, score FROM score_unique WHERE pseudo = %s order by level_id, timestamp", (sys.argv[1],))
     rows = cur.fetchall()
     nb_rows = len(rows)
     i = 0
@@ -55,7 +55,7 @@ if __name__=='__main__':
         i = i + 1
 
     print "Cleaning table score"
-    cur.execute("DELETE FROM score WHERE pseudo = %s", (sys.argv[1]))
+    cur.execute("DELETE FROM score WHERE pseudo = %s", (sys.argv[1],))
     
     config.con.commit()
     config.con.close()

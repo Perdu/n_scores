@@ -10,6 +10,7 @@
     </script>
   </head>
   <body>
+    {% include 'form.html' %}
     {% if pseudo %}
     <h2>{{ pseudo }}</h2>
     <ul>
@@ -20,6 +21,6 @@
     {% else %}
     <h2>Player not found</h2>
     {% endif %}
-    {% include 'form.html' %}
+    {% include 'source.html' %}
   </body>
 </html>

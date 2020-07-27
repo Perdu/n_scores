@@ -62,6 +62,7 @@
     </script>
   </head>
   <body>
+    {% include 'form.html' %}
     <h1>Number of new scores over time</h1>
     <script src="/static/highcharts.js"></script>
     <script src="/static/exporting.js"></script>
@@ -76,6 +77,6 @@
       </tr>
       {{ table|safe }}
     </table>
-    {% include 'form.html' %}
+    {% include 'source.html' %}
   </body>
 </html>

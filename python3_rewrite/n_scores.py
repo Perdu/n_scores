@@ -88,6 +88,8 @@ def level_id_to_str(level_id):
 
 def str_to_level_id(level_str):
     t = level_str.split('-')
+    if len(t) != 2 or t[0] == '' or t[1] == '' or int(t[0]) > 99 or int(t[1]) > 5:
+        return -1
     try:
         return int(int(t[0])*10 + int(t[1]))
     except:
@@ -162,6 +164,8 @@ def display_all_score():
     level_id = str(str_to_level_id(level))
     player = request.args.get('player', '')
     place = request.args.get('place', '')
+    if level_id == "-1":
+        return render_template("error.html", error="You entered an invalid level id.")
     if player == "" and place == "":
         rows = execute("SELECT timestamp, pseudo, score, place, ISNULL(demo) FROM score_unique WHERE level_id = %s ORDER BY score DESC", (level_id,), return_rows = True)
     elif player != "":
@@ -195,6 +199,8 @@ def disp_level():
         top = 20
     top_opt = ""
     converted_level = str(str_to_level_id(level))
+    if converted_level == "-1":
+        return render_template("error.html", error="You entered an invalid level id.")
     by_place_form = ""
     avg_form = ""
     diff_form = ""

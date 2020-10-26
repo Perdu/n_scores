@@ -336,9 +336,9 @@ def new():
         top = str(int(place) + 1)
         row = execute("SELECT score, timestamp, ISNULL(demo) from score_unique where level_id = %s and pseudo = %s and timestamp < %s ORDER BY timestamp DESC limit 1;", (level_id, pseudo, timestamp))
         if row is not None:
-            prev_score = score_to_str(row2[0])
-            prev_date = str(row2[1])
-            demo_exists = not bool(row2[2])
+            prev_score = score_to_str(row[0])
+            prev_date = str(row[1])
+            demo_exists = not bool(row[2])
             if demo_exists:
                 link = "<a href='/demo?player=" + pseudo + '&level_id=' + level_id + '&timestamp=' + prev_date + "'>" + prev_score + "</a>"
             else :

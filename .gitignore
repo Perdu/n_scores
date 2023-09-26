@@ -4,3 +4,4 @@ config.py
 *.hs
 *.7z
 *.wsgi
+TAGS

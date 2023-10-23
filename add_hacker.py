@@ -15,12 +15,12 @@ def connect_db():
 
 if __name__=='__main__':
     if len(sys.argv) != 2:
-        print "Usage: python add_hacker.py <name>"
+        print("Usage: python add_hacker.py <name>")
         sys.exit(1)
 
     nhighconfig = NHighConfig()
     if sys.argv[1] in nhighconfig.ignoredPlayers:
-        print "Hacker already known. Cleaning database anyway."
+        print("Hacker already known. Cleaning database anyway.")
     else:
         nhighconfig.ignoredPlayers.append(sys.argv[1])
         nhighconfig.save()
@@ -28,7 +28,7 @@ if __name__=='__main__':
     config.con = connect_db()
     cur = config.con.cursor()
 
-    cur.execute("SELECT level_id, timestamp, place, score FROM score_unique WHERE pseudo = %s order by level_id, timestamp", (sys.argv[1],))
+    cur.execute("SELECT level_id, timestamp, place, score FROM score_unique WHERE pseudo = %s order by level_id, timestamp", (sys.argv[1]))
     rows = cur.fetchall()
     nb_rows = len(rows)
     i = 0
@@ -42,7 +42,7 @@ if __name__=='__main__':
         timestamp = row[1]
         place = row[2]
         score = row[3]
-        print "Cleaning level " + str(level_id)
+        print("Cleaning level " + str(level_id))
         if next_row != None and next_row[0] == level_id:
             # If there are several scores on a level, only updates
             # places until the date of that next score
@@ -54,8 +54,8 @@ if __name__=='__main__':
         cur.execute("DELETE FROM score_unique WHERE pseudo = %s AND level_id = %s AND timestamp = %s", (sys.argv[1], level_id, timestamp))
         i = i + 1
 
-    print "Cleaning table score"
-    cur.execute("DELETE FROM score WHERE pseudo = %s", (sys.argv[1],))
+    print("Cleaning table score")
+    cur.execute("DELETE FROM score WHERE pseudo = %s", (sys.argv[1]))
     
     config.con.commit()
     config.con.close()

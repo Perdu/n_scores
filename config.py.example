@@ -7,7 +7,7 @@ user = ''
 password = ''
 
 if password == '' or user == '':
-    print "Please set database user and password in config.py"
+    print("Please set database user and password in config.py")
     sys.exit()
 
 is_debug_activated = False

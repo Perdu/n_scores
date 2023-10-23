@@ -5,7 +5,7 @@
 # You may freely modify and distribute this program, as long
 # as I am credited.
 
-import urllib, cPickle, datetime, httplib, time, sys, os, re
+import urllib.request, urllib.parse, urllib.error, pickle, datetime, http.client, time, sys, os, re
 import struct
 
 NUM_EPISODES = 100
@@ -14,9 +14,6 @@ FRAME_TIME = 0.025
 
 
 
-### The following is needed for python 2.3 support:   
-if not hasattr(__builtins__,'set'):
-    from sets import Set as set
 def itemgetter(index): #same as operator.itemgetter
     return lambda x: x[index]
 def sortList(lst, key=None, reverse=False):
@@ -66,7 +63,7 @@ class NHighConfig(object):
             setattr(self, fld.name, fld.default)
 
         try:
-            f=file(self.configFile,'r')
+            f=open(self.configFile,'r', encoding='latin-1')
             fdata = f.read()
             f.close()
         except (IOError,OSError):
@@ -142,25 +139,26 @@ class NHighConfig(object):
 def unicode2str(u, errors='replace'):
     return u.encode('latin1', errors)
 
-class NHighError(StandardError):
+class NHighError(Exception):
     pass
 
-class AppURLopener(urllib.FancyURLopener):
+class AppURLopener(urllib.request.FancyURLopener):
     def __init__(self, *args):
         self.version = "NHigh/2.0"
-        urllib.FancyURLopener.__init__(self, *args)
-urllib._urlopener = AppURLopener()
+        urllib.request.FancyURLopener.__init__(self, *args)
+urllib.request._urlopener = AppURLopener()
 
 def openURL(url, data=None):
     try:
-        f = urllib.urlopen(url, data)
+        data = data.encode('utf-8')
+        f = urllib.request.urlopen(url, data)
         ret = f.read()
         f.close()
-        return ret
+        return ret.decode('utf-8')
     except AttributeError: #workaround a urllib bug
         raise IOError('HTTP error: connection reset')
-    except httplib.HTTPException,e:
-        raise IOError, ('http error: '+str(e)), sys.exc_info()[2]
+    except http.client.HTTPException as e:
+        raise IOError('http error: '+str(e)).with_traceback(sys.exc_info()[2])
 
 class HighScore(object):
     def __init__(self, name=None, score=None):
@@ -191,7 +189,7 @@ class HSTable(object):
 emptyHighScore = HighScore('', 0)
 
 def _postProcessLevelScores(lvlScores):
-    for i in xrange(len(lvlScores)-1,-1,-1):
+    for i in range(len(lvlScores)-1,-1,-1):
         entry = lvlScores[i]
         if entry.name.lower() in config.ignoredPlayersSet:
             del lvlScores[i]
@@ -210,10 +208,10 @@ def _downloadAllEpisodeScoresOnce(ep, ret):
         sp = assignment.split('=',1)
         if len(sp)!=2: continue
         dct[sp[0]] = sp[1]
-    for lvl in xrange(6):
+    for lvl in range(6):
         lvlkey = '01234e'[lvl]
         try:
-            for rank in xrange(20):
+            for rank in range(20):
                 scorekey = lvlkey+'score'+str(rank)
                 namekey = lvlkey+'name'+str(rank)
                 score = int(dct[scorekey])
@@ -229,7 +227,7 @@ def _downloadAllEpisodeScoresOnce(ep, ret):
 def _downloadAllEpisodeScores(ep):
     ret = [[emptyHighScore]*20 for i in range(6)]
     #sometimes we get bad data from the server - so try again
-    for trynum in xrange(5):
+    for trynum in range(5):
         if _downloadAllEpisodeScoresOnce(ep,ret):
             break
         time.sleep(5)
@@ -243,7 +241,7 @@ class HSDownloader(object):
         '''Generator that does a partial download and yields
         the amount done (0.0 to 1.0).'''
         self._table = []
-        for ep in xrange(NUM_EPISODES):
+        for ep in range(NUM_EPISODES):
             yield ep*1.0/NUM_EPISODES
             self._table.append(_downloadAllEpisodeScores(ep))
         yield 1.0
@@ -263,20 +261,20 @@ def fixFileName(fname):
 
 def saveScores(hsTable, fname):
     fname = fixFileName(fname)
-    f=file(fname, 'wb')
+    f=open(fname, 'wb', encoding='latin-1')
     lst = [[[(entry.name, entry.score)
              for entry in lvl_entries]
              for lvl_entries in epi_entries]
              for epi_entries in hsTable.table]
     data = (1, hsTable.timestamp, lst)
-    cPickle.dump(data, f, 2)
+    pickle.dump(data, f, 2)
     f.close()
 
 def loadScores(fname):
     try:
         fname = fixFileName(fname)
-        f=file(fname, 'rb')
-        data = cPickle.load(f)
+        f=open(fname, 'rb', encoding='latin-1')
+        data = pickle.load(f)
         f.close()
         if data[0]!=1:
             raise NHighError("Bad file format")
@@ -299,7 +297,7 @@ def getPlayerZeroth(hsTable, player):
     for ep_num, ep_entries in enumerate(hsTable.table):
         for lvl_num, lvl_entries in enumerate(ep_entries):
             numOf0th = _getNumOfZeroth(lvl_entries)
-            for rank in xrange(numOf0th):
+            for rank in range(numOf0th):
                 entry = lvl_entries[rank]
                 if entry.name.lower() == pllower:
                     ret.append((ep_num, lvl_num, entry))
@@ -319,7 +317,7 @@ def findZerothImprovements(hsTableOld, hsTableNew):
     '''Find places where the 0th improved.
     Return list of tuples (episode, level, old entry, new entry)'''
     ret = []
-    for episode in xrange(NUM_EPISODES):
+    for episode in range(NUM_EPISODES):
         for level in range(6):
             oldZeroth = hsTableOld.table[episode][level][0]
             newZeroth = hsTableNew.table[episode][level][0]
@@ -455,7 +453,7 @@ def downloadReplayByName(ep, lvl, name):
     try:
         pkey = getReplayKeyByName(ep, lvl, name)
         if pkey is None:
-            print "Unable to download replay - replay key not found"
+            print("Unable to download replay - replay key not found")
             return (None, None, None)
 
         is_episode = (lvl == 5)
@@ -471,7 +469,7 @@ def downloadReplayByName(ep, lvl, name):
             demo = m_demo.group(1)
             score = int(m_score.group(1))
         except (ValueError, AttributeError):
-            print 'Unable to download replay - received invalid data'
+            print('Unable to download replay - received invalid data')
             return (None, None, None)
 
         return (player, score, demo)
@@ -508,7 +506,7 @@ def parseReplay(data):
     ret = []
     for num in nums:
         numbits = min(frames, 7)
-        for bit in xrange(numbits):
+        for bit in range(numbits):
             ret.append(num & 0xF)
             num >>= 4
             
@@ -732,10 +730,10 @@ def calcTotalScores(solData):
     totalEpisodeScore = 0
     totalLevelScore = 0
     try:
-        for ep in xrange(NUM_EPISODES):
+        for ep in range(NUM_EPISODES):
             epData = solData['persBest'][ep]
             totalEpisodeScore += int(epData['ep']['score'])
-            for lvl in xrange(5):
+            for lvl in range(5):
                 totalLevelScore += int(epData['lev'][lvl]['score'])
     except (KeyError,TypeError):
         raise NHighError('.sol data is incomplete')
@@ -749,15 +747,15 @@ def findUnsubmittedTop20(solData, hsTable):
     player = unicode2str(solData['username'])
     pllower = player.lower()
     try:
-        for ep in xrange(NUM_EPISODES):
+        for ep in range(NUM_EPISODES):
             epSolData = solData['persBest'][ep]
             solScores = [0]*6
-            for lvl in xrange(5):
+            for lvl in range(5):
                 solScores[lvl] = int(epSolData['lev'][lvl]['score'])
             solScores[5] = int(epSolData['ep']['score'])
             
             epHSData = hsTable.table[ep]
-            for lvl in xrange(6):
+            for lvl in range(6):
                 solScore = solScores[lvl]
                 lvlHSData = epHSData[lvl]
                 for rank,entry in enumerate(lvlHSData):
@@ -783,5 +781,5 @@ def findUnsubmittedTop20(solData, hsTable):
 config = NHighConfig()
 
 if __name__=='__main__':
-    print 'Do not run this file - run nhigh.py instead'
-    raw_input('Press Enter...')
+    print('Do not run this file - run nhigh.py instead')
+    input('Press Enter...')

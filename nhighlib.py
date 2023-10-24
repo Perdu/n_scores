@@ -261,7 +261,7 @@ def fixFileName(fname):
 
 def saveScores(hsTable, fname):
     fname = fixFileName(fname)
-    f=open(fname, 'wb', encoding='latin-1')
+    f=open(fname, 'wb')
     lst = [[[(entry.name, entry.score)
              for entry in lvl_entries]
              for lvl_entries in epi_entries]

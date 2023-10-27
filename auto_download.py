@@ -21,10 +21,11 @@ def connect_db():
     return mdb.connect('localhost', config.user, config.password, 'n_scores2')
 
 def usage():
-    print("usage: " + sys.argv[0] + "[--fill-score][--fill-score-unique][--save-hs-file][--help]")
+    print("usage: " + sys.argv[0] + "[--fill-score][--fill-score-unique][--save-hs-file][--save-diff-only FILE][--help]")
     print("\t--fill-score: fill database with all scores. Don't do this too often (e.g. daily)")
     print("\t--fill-score-unique: fill database with new scores only. Do this often (e.g. hourly)")
     print("\t--save-hs-file: keep .hs file (readable by NHigh)")
+    print("\t--save-diff-only FILE: don't save file if there is no difference with given file")
     print("\t--help: display this help message")
 
 def run():
@@ -34,7 +35,7 @@ def run():
         sys.exit(1)
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], '', ["fill-score", "fill-score-unique", "save-hs-file", "help"])
+        opts, args = getopt.getopt(sys.argv[1:], '', ["fill-score", "fill-score-unique", "save-hs-file", "help", "save-diff-only="])
     except getopt.GetoptError as err:
         print("Error: " + str(err))
         sys.exit(1)
@@ -42,6 +43,7 @@ def run():
     fill_score_unique = False
     fill_score = False
     save_hs_file = False
+    save_diff_only = False
     for o, arg in opts:
         if o == "--fill-score-unique":
             fill_score_unique = True
@@ -49,6 +51,8 @@ def run():
             fill_score = True
         elif o == "--save-hs-file":
             save_hs_file = True
+        elif o == "--save-diff-only":
+            save_diff_only = True
         elif o == "--help":
             usage()
             sys.exit(0)
@@ -71,6 +75,14 @@ def run():
     if save_hs_file:
         print("Saving data to file " + cur_time + ".hs")
         saveScores(table, cur_time + ".hs")
+    if save_diff_only:
+        print("Comparing results to file %s" % (arg))
+        scores = loadScores(arg)
+        if scores.table != table.table:
+            print("New scores, saving to " + cur_time + ".hs")
+            saveScores(table, cur_time + ".hs")
+        else:
+            print("No new score found, not creating new save file.")
 
     config.con.close()
 

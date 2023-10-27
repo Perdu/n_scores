@@ -274,7 +274,7 @@ def loadScores(fname):
     try:
         fname = fixFileName(fname)
         f=open(fname, 'rb')
-        data = pickle.load(f)
+        data = pickle.load(f, encoding='latin-1')
         f.close()
         if data[0]!=1:
             raise NHighError("Bad file format")

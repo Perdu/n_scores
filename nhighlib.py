@@ -273,7 +273,7 @@ def saveScores(hsTable, fname):
 def loadScores(fname):
     try:
         fname = fixFileName(fname)
-        f=open(fname, 'rb', encoding='latin-1')
+        f=open(fname, 'rb')
         data = pickle.load(f)
         f.close()
         if data[0]!=1:

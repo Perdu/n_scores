@@ -32,6 +32,27 @@ def run():
     if len(sys.argv) == 1:
         usage()
         sys.exit(1)
+
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], '', ["fill-score", "fill-score-unique", "save-hs-file", "help"])
+    except getopt.GetoptError as err:
+        print("Error: " + str(err))
+        sys.exit(1)
+
+    fill_score_unique = False
+    fill_score = False
+    save_hs_file = False
+    for o, arg in opts:
+        if o == "--fill-score-unique":
+            fill_score_unique = True
+        elif o == "--fill-score":
+            fill_score = True
+        elif o == "--save-hs-file":
+            save_hs_file = True
+        elif o == "--help":
+            usage()
+            sys.exit(0)
+
     print("Downloading data from metanet server...")
     downloader = HSDownloader()
     table = []
@@ -41,25 +62,15 @@ def run():
     config.con = connect_db()
     cur = config.con.cursor()
 
-    try:
-        opts, args = getopt.getopt(sys.argv[1:], '', ["fill-score", "fill-score-unique", "save-hs-file", "help"])
-    except getopt.GetoptError as err:
-        print("Error: " + str(err))
-        sys.exit(1)
-
-    for o, arg in opts:
-        if o == "--fill-score-unique":
-            print("Checking new demos...")
-            download_demos(table.table)
-        elif o == "--fill-score":
-            print("Adding all scores to table score...")
-            fill_score(table.table)
-        elif o == "--save-hs-file":
-            print("Saving data to file " + cur_time + ".hs")
-            saveScores(table, cur_time + ".hs")
-        elif o == "--help":
-            usage()
-            sys.exit(0)
+    if fill_score_unique:
+        print("Checking new demos...")
+        download_demos(table.table)
+    if fill_score:
+        print("Adding all scores to table score...")
+        fill_score(table.table)
+    if save_hs_file:
+        print("Saving data to file " + cur_time + ".hs")
+        saveScores(table, cur_time + ".hs")
 
     config.con.close()
 

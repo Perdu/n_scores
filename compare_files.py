@@ -17,6 +17,7 @@ def run():
     scores1 = loadScores(sys.argv[1])
     scores2 = loadScores(sys.argv[2])
     print(scores1.table == scores2.table)
+    sys.exit(scores1.table != scores2.table)
 
 if __name__=='__main__':
     run()

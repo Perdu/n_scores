@@ -41,14 +41,14 @@ def run():
         sys.exit(1)
 
     fill_score_unique = False
-    fill_score = False
+    fill_score_opt = False
     save_hs_file = False
     save_diff_only = False
     for o, arg in opts:
         if o == "--fill-score-unique":
             fill_score_unique = True
         elif o == "--fill-score":
-            fill_score = True
+            fill_score_opt = True
         elif o == "--save-hs-file":
             save_hs_file = True
         elif o == "--save-diff-only":
@@ -69,7 +69,7 @@ def run():
     if fill_score_unique:
         print("Checking new demos...")
         download_demos(table.table)
-    if fill_score:
+    if fill_score_opt:
         print("Adding all scores to table score...")
         fill_score(table.table)
     if save_hs_file:

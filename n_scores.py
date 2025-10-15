@@ -386,7 +386,11 @@ def demo():
         timestamp = request.args.get('timestamp', '')
         score = request.args.get('score', '')
         if score == "":
-            row = execute("SELECT demo FROM score_unique WHERE level_id = %s AND pseudo = %s AND timestamp = %s", (level_id, pseudo, timestamp))
+            # The last condition handles the case in which a player
+            # submitted several scores in a row. As we may not have
+            # the demo for all of them, get the best one, for which we
+            # will have a demo for sure.
+            row = execute("SELECT demo FROM score_unique WHERE level_id = %s AND pseudo = %s AND timestamp = %s and score in (select MAX(score) FROM score_unique WHERE level_id = %s AND pseudo = %s AND timestamp = %s)", (level_id, pseudo, timestamp, level_id, pseudo, timestamp))
         else:
             row = execute("SELECT demo FROM score_unique WHERE level_id = %s AND pseudo = %s AND score = %s", (level_id, pseudo, score))
         return render_template("demo.html", demo=row[0])

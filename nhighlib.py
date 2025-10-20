@@ -98,7 +98,7 @@ class NHighConfig(object):
         self.onUpdated()
         if not os.path.exists(self.configDir):
             os.makedirs(self.configDir)
-        f = file(self.configFile, 'w')
+        f = open(self.configFile, 'w')
         try:
             f.write('''\
 # * NHigh configuration file *
@@ -715,7 +715,7 @@ def readSolFile():
     if not filename:
         raise NHighError('.sol file not found')
     try:
-        f = file(filename, 'rb')
+        f = open(filename, 'rb')
         try:
             return SolReader().readSol(f)
         finally:

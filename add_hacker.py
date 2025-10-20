@@ -5,7 +5,6 @@
 from nhighlib import *
 import datetime
 import sys
-import _mysql
 import MySQLdb as mdb
 import config
 

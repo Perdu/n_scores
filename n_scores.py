@@ -167,11 +167,11 @@ def display_all_score():
     if level_id == "-1":
         return render_template("error.html", error="You entered an invalid level id.")
     if player == "" and place == "":
-        rows = execute("SELECT timestamp, pseudo, score, place, ISNULL(demo) FROM score_unique WHERE level_id = %s ORDER BY score DESC, timestamp ASC", (level_id,), return_rows = True)
+        rows = execute("SELECT timestamp, pseudo, score, place, ISNULL(demo) FROM score_unique WHERE level_id = %s ORDER BY score DESC, timestamp ASC, place ASC", (level_id,), return_rows = True)
     elif player != "":
-        rows = execute("SELECT timestamp, pseudo, score, place, ISNULL(demo) FROM score_unique WHERE level_id = %s AND pseudo = %s ORDER BY score DESC, timestamp ASC", (level_id, player), return_rows = True)
+        rows = execute("SELECT timestamp, pseudo, score, place, ISNULL(demo) FROM score_unique WHERE level_id = %s AND pseudo = %s ORDER BY score DESC, timestamp ASC, place ASC", (level_id, player), return_rows = True)
     else:
-        rows = execute("SELECT timestamp, pseudo, score, place, ISNULL(demo) FROM score_unique WHERE level_id = %s AND place = %s ORDER BY score DESC, timestamp ASC", (level_id, place), return_rows = True)
+        rows = execute("SELECT timestamp, pseudo, score, place, ISNULL(demo) FROM score_unique WHERE level_id = %s AND place = %s ORDER BY score DESC, timestamp ASC, place ASC", (level_id, place), return_rows = True)
     table = ""
     for row in rows:
         timestamp = str(row[0])

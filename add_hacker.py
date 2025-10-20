@@ -27,7 +27,7 @@ if __name__=='__main__':
     config.con = connect_db()
     cur = config.con.cursor()
 
-    cur.execute("SELECT level_id, timestamp, place, score FROM score_unique WHERE pseudo = %s order by level_id, timestamp" % (sys.argv[1]))
+    cur.execute("SELECT level_id, timestamp, place, score FROM score_unique WHERE pseudo = '%s' order by level_id, timestamp" % (sys.argv[1]))
     rows = cur.fetchall()
     nb_rows = len(rows)
     i = 0
@@ -45,16 +45,16 @@ if __name__=='__main__':
         if next_row != None and next_row[0] == level_id:
             # If there are several scores on a level, only updates
             # places until the date of that next score
-            cur.execute("UPDATE score_unique SET place = place - 1 WHERE level_id = %s AND timestamp >= %s AND place > %s AND score <= %s AND timestamp < %s" % (level_id, timestamp, place, score, next_row[1]))
-            cur.execute("UPDATE score SET place = place - 1 WHERE level_id = %s AND timestamp >= %s AND place > %s AND score <= %s AND timestamp < %s" % (level_id, timestamp, place, score, next_row[1]))
+            cur.execute("UPDATE score_unique SET place = place - 1 WHERE level_id = %s AND timestamp >= '%s' AND place > %s AND score <= %s AND timestamp < '%s'" % (level_id, timestamp, place, score, next_row[1]))
+            cur.execute("UPDATE score SET place = place - 1 WHERE level_id = %s AND timestamp >= '%s' AND place > %s AND score <= %s AND timestamp < '%s'" % (level_id, timestamp, place, score, next_row[1]))
         else:
-            cur.execute("UPDATE score_unique SET place = place - 1 WHERE level_id = %s AND timestamp >= %s AND place > %s AND score <= %s" % (level_id, timestamp, place, score))
-            cur.execute("UPDATE score SET place = place - 1 WHERE level_id = %s AND timestamp >= %s AND place > %s AND score <= %s" % (level_id, timestamp, place, score))
-        cur.execute("DELETE FROM score_unique WHERE pseudo = %s AND level_id = %s AND timestamp = %s" % (sys.argv[1], level_id, timestamp))
+            cur.execute("UPDATE score_unique SET place = place - 1 WHERE level_id = %s AND timestamp >= '%s' AND place > %s AND score <= %s" % (level_id, timestamp, place, score))
+            cur.execute("UPDATE score SET place = place - 1 WHERE level_id = %s AND timestamp >= '%s' AND place > %s AND score <= %s" % (level_id, timestamp, place, score))
+        cur.execute("DELETE FROM score_unique WHERE pseudo = '%s' AND level_id = %s AND timestamp = '%s'" % (sys.argv[1], level_id, timestamp))
         i = i + 1
 
     print("Cleaning table score")
-    cur.execute("DELETE FROM score WHERE pseudo = %s" % (sys.argv[1]))
+    cur.execute("DELETE FROM score WHERE pseudo = '%s'" % (sys.argv[1]))
     
     config.con.commit()
     config.con.close()

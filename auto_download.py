@@ -21,11 +21,12 @@ def connect_db():
     return mdb.connect('localhost', config.user, config.password, 'n_scores2')
 
 def usage():
-    print("usage: " + sys.argv[0] + "[--fill-score][--fill-score-unique][--save-hs-file][--save-diff-only FILE][--help]")
+    print("usage: " + sys.argv[0] + "[--fill-score][--fill-score-unique][--save-hs-file][--save-diff-only FILE][--get-score 'LEVEL PSEUDO'][--help]")
     print("\t--fill-score: fill database with all scores. Don't do this too often (e.g. daily)")
     print("\t--fill-score-unique: fill database with new scores only. Do this often (e.g. hourly)")
     print("\t--save-hs-file: keep .hs file (readable by NHigh)")
     print("\t--save-diff-only FILE: don't save file if there is no difference with given file")
+    print("\t--get-demo 'LEVEL PSEUDO': get given demo")
     print("\t--help: display this help message")
 
 def run():
@@ -35,7 +36,7 @@ def run():
         sys.exit(1)
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], '', ["fill-score", "fill-score-unique", "save-hs-file", "help", "save-diff-only="])
+        opts, args = getopt.getopt(sys.argv[1:], '', ["fill-score", "fill-score-unique", "save-hs-file", "help", "save-diff-only=", "get-demo="])
     except getopt.GetoptError as err:
         print("Error: " + str(err))
         sys.exit(1)
@@ -44,6 +45,7 @@ def run():
     fill_score_opt = False
     save_hs_file = False
     save_diff_only = False
+    get_demo = False
     for o, arg in opts:
         if o == "--fill-score-unique":
             fill_score_unique = True
@@ -53,9 +55,21 @@ def run():
             save_hs_file = True
         elif o == "--save-diff-only":
             save_diff_only = True
+        elif o == "--get-demo":
+            get_demo = arg
         elif o == "--help":
             usage()
             sys.exit(0)
+
+    if get_demo:
+        match = re.match(r"(\d+)-(\d)\s+([A-Za-z-_]+)", get_demo)
+        episode_nb = int(match.group(1))
+        level_nb = int(match.group(2))
+        pseudo = match.group(3)
+        print(f"Downloading {episode_nb}-{level_nb} from {pseudo}")
+        (player, score, demo) = downloadReplayByName(episode_nb, level_nb, pseudo)
+        print(demo)
+        sys.exit(0)
 
     print("Downloading data from metanet server...")
     downloader = HSDownloader()

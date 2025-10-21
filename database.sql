@@ -22,3 +22,14 @@ CREATE TABLE `score_unique` (
        demo TEXT,
        PRIMARY KEY (`level_id`, `pseudo`, `score`)
 );
+
+-- contains speedruns from nreality
+CREATE TABLE `speedruns` (
+       level_id int(3) NOT NULL,
+       pseudo varchar(100) NOT NULL,
+       `timestamp` timestamp DEFAULT CURRENT_TIMESTAMP,
+       score int(10) unsigned NOT NULL,
+       place int(1) NOT NULL,
+       demo TEXT,
+       PRIMARY KEY (`level_id`, `pseudo`, `score`)
+);

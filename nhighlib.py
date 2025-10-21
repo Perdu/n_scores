@@ -445,8 +445,8 @@ def downloadReplay(ep, lvl, rank):
 
         return (player, score, demo)        
         
-    except IOError:
-        raise NHighError('Error downloading replay data')
+    except IOError as e:
+        raise NHighError('Error downloading replay data: %s' % e)
 
 def downloadReplayByName(ep, lvl, name):
     'Returns tuple: (player,score,demo)'

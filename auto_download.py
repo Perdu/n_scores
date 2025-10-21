@@ -27,6 +27,7 @@ def usage():
     print("\t--save-hs-file: keep .hs file (readable by NHigh)")
     print("\t--save-diff-only FILE: don't save file if there is no difference with given file")
     print("\t--get-demo 'LEVEL PSEUDO': get given demo")
+    print("\t--speedruns: download all speedrun demos")
     print("\t--help: display this help message")
 
 def run():
@@ -36,7 +37,7 @@ def run():
         sys.exit(1)
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], '', ["fill-score", "fill-score-unique", "save-hs-file", "help", "save-diff-only=", "get-demo="])
+        opts, args = getopt.getopt(sys.argv[1:], '', ["fill-score", "fill-score-unique", "save-hs-file", "help", "save-diff-only=", "get-demo=", "speedruns"])
     except getopt.GetoptError as err:
         print("Error: " + str(err))
         sys.exit(1)
@@ -46,6 +47,7 @@ def run():
     save_hs_file = False
     save_diff_only = False
     get_demo = False
+    speedruns = False
     for o, arg in opts:
         if o == "--fill-score-unique":
             fill_score_unique = True
@@ -57,9 +59,28 @@ def run():
             save_diff_only = True
         elif o == "--get-demo":
             get_demo = arg
+        elif o == "--speedruns":
+            speedruns = True
         elif o == "--help":
             usage()
             sys.exit(0)
+
+    # Let's keep it simple and just download all demos once
+    if speedruns:
+        config.con = connect_db()
+        cur = config.con.cursor()
+        for episode in range(100):
+            for level in range(5):
+                print(f"Downloading {episode}-{level}")
+                (pseudo, score, demo) = downloadReplay(episode, level, 0, nreality=True)
+                try:
+                    level_id = convert_level_nb(episode, level)
+                    place = 0
+                    cur.execute("INSERT INTO speedruns VALUES(%s, %s, NOW(), %s, %s, %s)", (level_id, pseudo, score, place, demo))
+                except mdb.IntegrityError as err:
+                    print(err)
+        config.con.commit()
+        sys.exit(0)
 
     if get_demo:
         match = re.match(r"(\d+)-(\d)\s+([A-Za-z-_]+)", get_demo)

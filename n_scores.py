@@ -126,8 +126,8 @@ def disp_player():
         first_0th = ""
         first_0th_timestamp = ""
         # Players may have a top 20 but no 0th
-        row = rows[0]
-        if row is not None:
+        if len(rows) > 0:
+            row = rows[0]
             first_0th_timedelta = row[0]
             first_0th_timestamp = row[0].strftime("%B %d, %Y")
             if first_0th_timestamp == MIN_DATE:

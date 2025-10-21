@@ -148,7 +148,7 @@ class AppURLopener(urllib.request.FancyURLopener):
         urllib.request.FancyURLopener.__init__(self, *args)
 urllib.request._urlopener = AppURLopener()
 
-def openURL(url, data=None):
+def openURL(url, data=None, nreality=False):
     try:
         data = data.encode('utf-8')
         f = urllib.request.urlopen(url, data)
@@ -385,17 +385,27 @@ def getAllPlayerStats(hsTable, includeEpisodes=True):
 
 ##### replay download/analysis #####
 
-def getReplayKey(ep, lvl, rank):
-    if ep<0 or ep>=NUM_EPISODES or lvl<0 or lvl>4 or rank<0 or rank>19:
-        return None
-    url = 'http://www.harveycartel.org/metanet/n/data13/get_topscores_query_jg.php'
-    postdata = 'episode%5Fnumber=' + str(ep)
-    allscores = openURL(url, postdata).replace('\r','')
-    searchstr = r'&%dpkey%d=(\d+)' % (lvl, rank)
-    m=re.search(searchstr, allscores)
-    if not m:
-        return None
-    return int(m.group(1))
+def getReplayKey(ep, lvl, rank, nreality=False):
+    if nreality:
+        url = 'http://n.infunity.com/get_topscores_query_speedrun.php'
+        postdata = 'episode%5Fnumber=' + str(ep)
+        allscores = openURL(url, postdata).replace('\r','')
+        searchstr = r'&%dpkey%d=(\d+)' % (lvl, rank)
+        m=re.search(searchstr, allscores)
+        if not m:
+            return None
+        return int(m.group(1))
+    else:
+        if ep<0 or ep>=NUM_EPISODES or lvl<0 or lvl>4 or rank<0 or rank>19:
+            return None
+        url = 'http://www.harveycartel.org/metanet/n/data13/get_topscores_query_jg.php'
+        postdata = 'episode%5Fnumber=' + str(ep)
+        allscores = openURL(url, postdata).replace('\r','')
+        searchstr = r'&%dpkey%d=(\d+)' % (lvl, rank)
+        m=re.search(searchstr, allscores)
+        if not m:
+            return None
+        return int(m.group(1))
 
 def getReplayKeyByName(ep, lvl, name):
     if ep<0 or ep>=NUM_EPISODES or lvl<0 or lvl>5:
@@ -413,23 +423,25 @@ def getReplayKeyByName(ep, lvl, name):
         return None
     return int(m.group(1))
 
-def downloadReplayByPKey(pkey, is_episode):
-    if is_episode:
+def downloadReplayByPKey(pkey, is_episode, nreality=False):
+    if nreality:
+        url = 'http://n.infunity.com/get_lv_demo_speedrun.php'
+    elif is_episode:
         url = 'http://www.harveycartel.org/metanet/n/data13/get_ep_demo.php'
     else:
         url = 'http://www.harveycartel.org/metanet/n/data13/get_lv_demo.php'
     postdata = 'pk='+str(pkey)
     return openURL(url, postdata).replace('\r','')
 
-def downloadReplay(ep, lvl, rank):
+def downloadReplay(ep, lvl, rank, nreality=False):
     'Returns tuple: (player,score,demo)'
     try:
-        pkey = getReplayKey(ep, lvl, rank)
+        pkey = getReplayKey(ep, lvl, rank, nreality)
         if pkey is None:
             raise NHighError('Unable to download replay - replay key not found')
 
         is_episode = (lvl == 5)
-        alldata = downloadReplayByPKey(pkey, is_episode)
+        alldata = downloadReplayByPKey(pkey, is_episode, nreality)
         m_name=re.search('&name=([^&]+)',alldata)
         m_score=re.search('&score=([^&]+)',alldata)
         if is_episode:

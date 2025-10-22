@@ -11,6 +11,7 @@ import sys
 # import _mysql
 import MySQLdb as mdb
 import getopt
+import csv
 
 import config
 
@@ -69,6 +70,7 @@ def run():
     if speedruns:
         config.con = connect_db()
         cur = config.con.cursor()
+        timestamps = get_timestamps_from_csv_file()
         for episode in range(100):
             for level in range(5):
                 print(f"Downloading {episode}-{level}")
@@ -76,6 +78,7 @@ def run():
                 try:
                     level_id = convert_level_nb(episode, level)
                     place = 0
+                    timestamp = get_timestamp(timestamps, level_id, score, pseudo)
                     cur.execute("INSERT INTO speedruns VALUES(%s, %s, NOW(), %s, %s, %s)", (level_id, pseudo, score, place, demo))
                 except mdb.IntegrityError as err:
                     print(err)
@@ -185,6 +188,26 @@ def fill_score(scores):
         level_nb = 0
     config.con.commit()
 
+def get_timestamps_from_csv_file():
+    filename = 'speedrun_timestamps.csv'
+    result = {}
+    with open(filename, 'r', encoding='utf-8') as f:
+        reader = csv.DictReader(f, delimiter='\t')
+        for row in reader:
+            level_id = convert_level_nb(int(row['Episode']), int(row['Level']))
+            result[level_id] = {}
+            result[level_id]['score'] = int(row['Frame'])
+            result[level_id]['pseudo'] = row['Name']
+            result[level_id]['timestamp'] = row['Time']
+    return result
+
+def get_timestamp(timestamps, level_id, score, pseudo):
+#    print(timestamps[level_id]['score'] != score or timestamps[level_id]['pseudo'] != pseudo:)
+    if timestamps[level_id]['score'] != score or timestamps[level_id]['pseudo'] != pseudo:
+        print(f"Error: non-matching scores on level {level_id}")
+        sys.exit(1)
+    else:
+        return timestamps[level_id]['timestamp']
 
 if __name__=='__main__':
     run()

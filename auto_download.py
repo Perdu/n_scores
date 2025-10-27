@@ -79,7 +79,7 @@ def run():
                     level_id = convert_level_nb(episode, level)
                     place = 0
                     timestamp = get_timestamp(timestamps, level_id, score, pseudo)
-                    cur.execute("INSERT INTO speedruns VALUES(%s, %s, NOW(), %s, %s, %s)", (level_id, pseudo, score, place, demo))
+                    cur.execute("INSERT INTO speedruns VALUES(%s, %s, %s, %s, %s, %s)", (level_id, pseudo, timestamp, score, place, demo))
                 except mdb.IntegrityError as err:
                     print(err)
         config.con.commit()

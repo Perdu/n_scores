@@ -142,11 +142,18 @@ def unicode2str(u, errors='replace'):
 class NHighError(Exception):
     pass
 
-class AppURLopener(urllib.request.FancyURLopener):
-    def __init__(self, *args):
-        self.version = "NHigh/2.0"
-        urllib.request.FancyURLopener.__init__(self, *args)
-urllib.request._urlopener = AppURLopener()
+class AppURLopener(urllib.request.BaseHandler):
+    def __init__(self, user_agent="NHigh/2.0"):
+        self.user_agent = user_agent
+
+    def http_request(self, req):
+        req.add_header('User-Agent', self.user_agent)
+        return req
+
+    https_request = http_request  # Apply to HTTPS as well
+
+opener = urllib.request.build_opener(AppURLopener())
+urllib.request.install_opener(opener)
 
 def openURL(url, data=None, nreality=False):
     try:
